@@ -6,6 +6,7 @@ import lejos.hardware.Key;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Delay;
+import lejos.hardware.sensor.*;
 
 public class Marvin {
 	
@@ -20,18 +21,15 @@ public class Marvin {
 		Marvin marvin = new Marvin();
 		marvin.run();
 	}
-	
-	// Goeie morgen! - Herman
-	
-	// Goede morgen Hier Paul
-	
-	// Ook goeie morgen van Reinder
-	
+		
 	private void run() {
 		TextLCD display = brick.getTextLCD();
 		display.drawString("Welkom", 0, 3);
 		display.drawString("Team Alpha!", 0, 4);
 		waitForKey(Button.ENTER);
+		
+		EV3TouchSensor drukKnop = new EV3TouchSensor();
+		
 	}
 	
 	public void waitForKey(Key key) {
