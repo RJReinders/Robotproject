@@ -23,6 +23,8 @@ public class Marvin {
 	
 	// Goeie morgen! - Herman
 	
+	// Goede morgen Hier Paul
+	
 	private void run() {
 		TextLCD display = brick.getTextLCD();
 		display.drawString("Welkom", 0, 3);
