@@ -21,6 +21,8 @@ public class Marvin {
 		marvin.run();
 	}
 	
+	// Goeie morgen! - Herman
+	
 	private void run() {
 		TextLCD display = brick.getTextLCD();
 		display.drawString("Welkom", 0, 3);
