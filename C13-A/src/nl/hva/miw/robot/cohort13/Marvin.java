@@ -28,8 +28,6 @@ public class Marvin {
 		display.drawString("Team Alpha!", 0, 4);
 		waitForKey(Button.ENTER);
 		
-		EV3TouchSensor drukKnop = new EV3TouchSensor;
-		
 	}
 	
 	public void waitForKey(Key key) {
