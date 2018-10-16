@@ -6,7 +6,7 @@ import lejos.hardware.Key;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Delay;
-import lejos.hardware.sensor.*;
+import lejos.hardware.sensor.EV3TouchSensor;
 
 public class Marvin {
 	
@@ -28,7 +28,7 @@ public class Marvin {
 		display.drawString("Team Alpha!", 0, 4);
 		waitForKey(Button.ENTER);
 		
-		EV3TouchSensor drukKnop = new EV3TouchSensor();
+		EV3TouchSensor drukKnop = new EV3TouchSensor;
 		
 	}
 	
