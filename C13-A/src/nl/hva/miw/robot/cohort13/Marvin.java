@@ -20,6 +20,12 @@ public class Marvin {
 
 	private void run() {
 
+		TextLCD display = brick.getTextLCD();
+		display.drawString("Welkom", 0, 3);
+		display.drawString("Team Alpha!", 0, 4);
+		waitForKey(Button.ENTER);
+		
+
 	}
 
 	public void waitForKey(Key key) {
