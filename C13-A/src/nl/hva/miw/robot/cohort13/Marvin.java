@@ -3,6 +3,8 @@ package nl.hva.miw.robot.cohort13;
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
+import lejos.hardware.Keys;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Delay;
@@ -10,7 +12,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 
 public class Marvin {
 	
-	Brick brick;
+	 Brick brick;
 	
 	public Marvin() {
 		super();
@@ -26,16 +28,45 @@ public class Marvin {
 		TextLCD display = brick.getTextLCD();
 		display.drawString("Welkom", 0, 3);
 		display.drawString("Team Alpha!", 0, 4);
-		waitForKey(Button.ENTER);
-		
+		waitForKeyPress();
+	
 	}
 	
-	public void waitForKey(Key key) {
-		while(key.isUp()) {
-			Delay.msDelay(100);
+	
+	public void waitForKeyPress() {
+		
+		Sound.twoBeeps();
+		
+		System.out.println("Menu");
+		System.out.println("Links = LineFollower()");
+		
+		
+		int pressedButton = Button.waitForAnyEvent();
+		
+		if (pressedButton == Button.ID_LEFT) {
+			System.out.println("Links");
+		} else if (pressedButton == Button.ID_RIGHT) {
+			System.out.println("Rechts");
+		} else if (pressedButton == Button.ID_UP) {
+			System.out.println("Boven");
+		} else if (pressedButton == Button.ID_DOWN) {
+			System.out.println("Onder");
+		} else if (pressedButton == Button.ID_ENTER) {
+			System.out.println("Enter");
+		} else if (pressedButton == Button.ID_ESCAPE) {
+			System.exit(0);
 		}
-		while(key.isDown()) {
-			Delay.msDelay(100);
-		}
+		
+		Delay.msDelay(2000);
 	}
+	
+	
+//	public void waitForKey(Key key) {
+//		while(key.isUp()) {
+//			Delay.msDelay(100);
+//		}
+//		while(key.isDown()) {
+//			Delay.msDelay(100);
+//		}
+//	}
 }
