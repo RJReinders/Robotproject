@@ -2,7 +2,6 @@ package nl.hva.miw.robot.cohort13;
 
 import assignments.Assignment;
 import assignments.LineFollower;
-//imports
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
@@ -15,6 +14,7 @@ import models.TouchStop;
 public class Marvin {
 
 	Brick brick;
+	TouchStop stopknop = new TouchStop();
 
 	public Marvin() {
 		super();
@@ -27,11 +27,17 @@ public class Marvin {
 	}
 
 	private void run() {
+		
+		stopknop.start();
+		
 
 		while (true) {
 			waitForKeyPress();
+			
 		}
 
+		
+		
 	}
 
 	public void waitForKeyPress() {
@@ -56,6 +62,7 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_ENTER) {
 			System.out.println("Enter");
 		} else if (pressedButton == Button.ID_ESCAPE) {
+			stopknop.endThread();
 			System.exit(0);
 
 		}
