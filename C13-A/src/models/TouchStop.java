@@ -28,7 +28,7 @@ public class TouchStop extends Thread {
 			sp.fetchSample(touchData, 0);
 			if(touchData[0] == 1) {
 				Sound.beep();
-				
+				endThread();
 				System.exit(0);
 			}
 		}

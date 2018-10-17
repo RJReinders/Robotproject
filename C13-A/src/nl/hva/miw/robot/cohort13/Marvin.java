@@ -15,6 +15,7 @@ public class Marvin {
 
 	Brick brick;
 	TouchStop stopknop = new TouchStop();
+	Assignment lineFollower = new LineFollower();
 
 	public Marvin() {
 		super();
@@ -51,7 +52,6 @@ public class Marvin {
 
 		if (pressedButton == Button.ID_LEFT) {
 			System.out.println("Links");
-			Assignment lineFollower = new LineFollower();
 			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			System.out.println("Rechts");
