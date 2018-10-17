@@ -5,6 +5,7 @@ import lejos.hardware.Brick;
 import lejos.hardware.Key;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
+import models.TouchStop;
 
 public class Marvin {
 
@@ -22,7 +23,9 @@ public class Marvin {
 	}
 
 	private void run() {
-
+TouchStop knopje = new TouchStop();
+knopje.start();
+		
 	}
 
 	public void waitForKey(Key key) {
