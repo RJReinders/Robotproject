@@ -5,6 +5,8 @@ import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 
+// Gemaakt door Herman Kaldeway
+
 public class LineFollower extends Assignment {
 
 	
