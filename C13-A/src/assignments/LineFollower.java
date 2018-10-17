@@ -1,11 +1,11 @@
 package assignments;
 
+import java.util.ArrayList;
+
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
-
-// Gemaakt door Herman Kaldeway
 
 public class LineFollower extends Assignment {
 
@@ -19,7 +19,10 @@ public class LineFollower extends Assignment {
 	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	SampleProvider sp = colorSensor.getRedMode();
 	float[] lightIntensity = new float[sp.sampleSize()];
-
+	
+	private static ArrayList<Float> roadMapA = new ArrayList<>();
+	private static ArrayList<Float> roadMapB = new ArrayList<>();
+	
 	public LineFollower() {
 
 	}
@@ -40,6 +43,9 @@ public class LineFollower extends Assignment {
 			float motorSpeedA = Mspeed2 * (currentLightIntensity - min);
 			float motorSpeedB = Mspeed2 * (max - currentLightIntensity);
 		
+			roadMapA.add(motorSpeedA);
+			roadMapB.add(motorSpeedB);
+		
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA * 4;
@@ -56,7 +62,7 @@ public class LineFollower extends Assignment {
 		
 			Motor.A.setSpeed(motorSpeedA);
 			Motor.B.setSpeed(motorSpeedB);
-		
+			
 			System.out.println(currentLightIntensity);
 		
 		}
@@ -64,6 +70,14 @@ public class LineFollower extends Assignment {
 		// Motor.A.stop();
 		// Motor.B.stop();
 	
+	}
+
+	public static ArrayList<Float> getRoadMapA() {
+		return roadMapA;
+	}
+
+	public static ArrayList<Float> getRoadMapB() {
+		return roadMapB;
 	}
 	
 }
