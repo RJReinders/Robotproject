@@ -1,7 +1,10 @@
 package nl.hva.miw.robot.cohort13;
 
-// imports
-
+//imports
+import lejos.hardware.Brick;
+import lejos.hardware.Key;
+import lejos.hardware.ev3.LocalEV3;
+import lejos.utility.Delay;
 
 public class Marvin {
 
@@ -19,7 +22,7 @@ public class Marvin {
 	}
 
 	private void run() {
-		
+
 	}
 
 	public void waitForKey(Key key) {
