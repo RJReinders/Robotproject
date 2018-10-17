@@ -42,14 +42,14 @@ public class LineFollower extends Assignment {
 		
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * 3;
+				motorSpeedA = -motorSpeedA * 5;
 			} else {
 				Motor.A.forward();
 			}
 
 			if (motorSpeedB < 0) {
 				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * 3;
+				motorSpeedB = -motorSpeedB * 5;
 			} else {
 				Motor.B.forward();
 			}

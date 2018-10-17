@@ -1,5 +1,7 @@
 package nl.hva.miw.robot.cohort13;
 
+import assignments.Assignment;
+import assignments.LineFollower;
 //imports
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
@@ -8,6 +10,7 @@ import lejos.hardware.Keys;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
+import models.TouchStop;
 
 public class Marvin {
 
@@ -24,8 +27,9 @@ public class Marvin {
 	}
 
 	private void run() {
-
-
+		while (true) {
+			waitForKeyPress();
+		}
 	}
 
 	
@@ -42,6 +46,8 @@ public class Marvin {
 		
 		if (pressedButton == Button.ID_LEFT) {
 			System.out.println("Links");
+			Assignment lineFollower = new LineFollower();
+			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			System.out.println("Rechts");
 		} else if (pressedButton == Button.ID_UP) {
