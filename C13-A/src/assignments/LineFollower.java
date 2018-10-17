@@ -14,23 +14,21 @@ public class LineFollower extends Assignment {
 	private float currentLightIntensity;
 	// private int Mspeed = 10;
 	private int Mspeed2 = 10;
+	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
+	SampleProvider sp = colorSensor.getRedMode();
+	float[] lightIntensity = new float[sp.sampleSize()];
 
 	public LineFollower() {
-		
+
 	}
 	
+	@Override
 	public void run() {
 	
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
-		SampleProvider sp = colorSensor.getRedMode();
-		float[] lightIntensity = new float[sp.sampleSize()];
-	
-		int i = 0;
-	
-		while (i < 5000) {
+		while (true) {
 			Motor.A.forward();
 			Motor.B.forward();
 		
@@ -42,14 +40,14 @@ public class LineFollower extends Assignment {
 		
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * 5;
+				motorSpeedA = -motorSpeedA * 4;
 			} else {
 				Motor.A.forward();
 			}
 
 			if (motorSpeedB < 0) {
 				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * 5;
+				motorSpeedB = -motorSpeedB * 4;
 			} else {
 				Motor.B.forward();
 			}
@@ -59,11 +57,10 @@ public class LineFollower extends Assignment {
 		
 			System.out.println(currentLightIntensity);
 		
-			i++;
 		}
 	
-		Motor.A.stop();
-		Motor.B.stop();
+		// Motor.A.stop();
+		// Motor.B.stop();
 	
 	}
 	
