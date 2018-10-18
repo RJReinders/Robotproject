@@ -1,5 +1,6 @@
 package models;
 
+import lejos.hardware.Sound;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
@@ -17,7 +18,7 @@ public class FindBlueLine extends Thread {
 	int WHITE = 6;
 	int BROWN = 7;
 	int currentColor;
-	boolean start;
+	boolean start = false;
 	Stopwatch stopwatch = new Stopwatch();
 	boolean finished = false;
 	int trackTime;
@@ -32,37 +33,38 @@ public class FindBlueLine extends Thread {
 		while(!finished) {
 		
 			colorSensor.setCurrentMode("ColorID");
+			
 			currentColor = colorSensor.getColorID();
 			
 			if (currentColor == BLUE && start == false) {
 				stopwatch.reset();
 				start = true;
+				Sound.beep();
 				Delay.msDelay(2000);
 			} else if (currentColor == BLUE) {
+				Sound.beep();
 				trackTime = stopwatch.elapsed();
 				System.out.println(trackTime);
+				finished = true;
 			}
 			
 			colorSensor.setCurrentMode("Red");
 			
-			Delay.msDelay(500);
+			Delay.msDelay(200);
 		}
+		
 	}
 	
-	public boolean checkBlue() {
-		return true;
+	public boolean getFinished() {
+		return finished;
 	}
 	
+	public int getTrackTime() {
+		return trackTime;
+	}
+
 	public void endThread() {
-		
-	}
-	
-	public void startTimer() {
-		
-	}
-	
-	public void endTimer() {
-		
+		finished = true;
 	}
 	
 }

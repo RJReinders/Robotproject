@@ -7,6 +7,7 @@ import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
+import models.FindBlueLine;
 
 public class LineFollower extends Assignment {
 
@@ -26,6 +27,8 @@ public class LineFollower extends Assignment {
 	private static ArrayList<Float> roadMapA = new ArrayList<>();
 	private static ArrayList<Float> roadMapB = new ArrayList<>();
 	
+	FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
+	
 	public LineFollower() {
 
 	}
@@ -43,7 +46,9 @@ public class LineFollower extends Assignment {
 
 		int i = 0;
 		
-		while (i < 1000) {
+		findBlueLine.start();
+		
+		while (!findBlueLine.getFinished()) {
 			Motor.A.forward();
 			Motor.B.forward();
 		
@@ -56,8 +61,8 @@ public class LineFollower extends Assignment {
 			roadMapA.add(motorSpeedA);
 			roadMapB.add(motorSpeedB);
 			
-			System.out.println(roadMapA.get(i));
-			System.out.println(roadMapB.get(i));
+			//System.out.println(roadMapA.get(i));
+			//System.out.println(roadMapB.get(i));
 			
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
@@ -79,14 +84,17 @@ public class LineFollower extends Assignment {
 			Delay.msDelay(100);
 			
 			// System.out.println(currentLightIntensity);
-		
-			i++;
 		}
+		
+		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+	
+		findBlueLine.endThread();
 	
 		Motor.A.stop();
 		Motor.B.stop();
 	}
 
+	
 	public static ArrayList<Float> getRoadMapA() {
 		return roadMapA;
 	}
@@ -94,5 +102,6 @@ public class LineFollower extends Assignment {
 	public static ArrayList<Float> getRoadMapB() {
 		return roadMapB;
 	}
+	
 	
 }
