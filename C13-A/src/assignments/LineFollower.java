@@ -45,12 +45,14 @@ public class LineFollower extends Assignment {
 		Motor.B.forward();
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
-		
+
 		while (currentLightIntensity > black) {
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
 			Delay.msDelay(100);
 		}
+		Motor.A.stop();
+		Motor.B.stop();
 
 		// TODO terugdraaien tot je zwart hebt gescand ipv code hieronder
 
