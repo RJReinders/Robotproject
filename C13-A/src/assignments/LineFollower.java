@@ -46,7 +46,7 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		while (currentLightIntensity > black) {
+		while (currentLightIntensity > black + 7) {
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
 			Delay.msDelay(100);
@@ -88,9 +88,9 @@ public class LineFollower extends Assignment {
 			if (calibrationValues.get(i) > white)
 				white = calibrationValues.get(i).intValue();
 		}
-		// print the values (testcode: kan later weg)
-		System.out.println("Zwartwaarde: " + black);
-		System.out.println("Witwaarde: " + white);
+		// update our min and max
+		min = black + DEVIATION;
+		max = white - DEVIATION;
 
 		// TODO: toevoegen check of er wel wit en zwart is gemeten
 
