@@ -32,7 +32,12 @@ public class LineFollower extends Assignment {
 	
 	@Override
 	public void run() {
+		
+		followLine();
 	
+	}
+
+	public void followLine() {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
@@ -80,7 +85,6 @@ public class LineFollower extends Assignment {
 	
 		Motor.A.stop();
 		Motor.B.stop();
-	
 	}
 
 	public static ArrayList<Float> getRoadMapA() {
