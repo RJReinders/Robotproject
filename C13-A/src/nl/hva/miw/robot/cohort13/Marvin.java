@@ -22,7 +22,7 @@ public class Marvin {
 		brick = LocalEV3.get();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Marvin marvin = new Marvin();
 		marvin.run();
 	}
