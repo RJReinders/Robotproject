@@ -1,23 +1,31 @@
 package assignments;
 
+import java.util.ArrayList;
+
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 
 public class LineFollower extends Assignment {
 
 	
 	private final int DEFAULT_SPEED = 50;
-	private int min = 12;
-	private int max = 40;
+	private int white = 50;
+	private int black = 6;
+	private int min = black + 7;
+	private int max = white - 7;
 	private float currentLightIntensity;
 	// private int Mspeed = 10;
 	private int Mspeed2 = 10;
 	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	SampleProvider sp = colorSensor.getRedMode();
 	float[] lightIntensity = new float[sp.sampleSize()];
-
+	
+	private static ArrayList<Float> roadMapA = new ArrayList<>();
+	private static ArrayList<Float> roadMapB = new ArrayList<>();
+	
 	public LineFollower() {
 
 	}
@@ -28,7 +36,9 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		while (true) {
+		int i = 0;
+		
+		while (i < 1000) {
 			Motor.A.forward();
 			Motor.B.forward();
 		
@@ -38,6 +48,12 @@ public class LineFollower extends Assignment {
 			float motorSpeedA = Mspeed2 * (currentLightIntensity - min);
 			float motorSpeedB = Mspeed2 * (max - currentLightIntensity);
 		
+			roadMapA.add(motorSpeedA);
+			roadMapB.add(motorSpeedB);
+			
+			System.out.println(roadMapA.get(i));
+			System.out.println(roadMapB.get(i));
+			
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA * 4;
@@ -54,14 +70,25 @@ public class LineFollower extends Assignment {
 		
 			Motor.A.setSpeed(motorSpeedA);
 			Motor.B.setSpeed(motorSpeedB);
+			
+			Delay.msDelay(100);
+			
+			// System.out.println(currentLightIntensity);
 		
-			System.out.println(currentLightIntensity);
-		
+			i++;
 		}
 	
-		// Motor.A.stop();
-		// Motor.B.stop();
+		Motor.A.stop();
+		Motor.B.stop();
 	
+	}
+
+	public static ArrayList<Float> getRoadMapA() {
+		return roadMapA;
+	}
+
+	public static ArrayList<Float> getRoadMapB() {
+		return roadMapB;
 	}
 	
 }
