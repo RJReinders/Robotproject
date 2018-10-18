@@ -38,54 +38,6 @@ public class LineFollower extends Assignment {
 		// Calibration program
 		calibrateColors();
 		rotateBackToBlackLine();
-
-		// Line Follower Program
-		int i = 0;
-
-		while (i < 1000) {
-
-			Motor.A.setSpeed(50);
-			Motor.B.setSpeed(50);
-
-			Motor.A.forward();
-			Motor.B.forward();
-
-			sp.fetchSample(lightIntensity, 0);
-			currentLightIntensity = (int) (lightIntensity[0] * 100);
-
-			float motorSpeedA = speedFactor * (currentLightIntensity - min);
-			float motorSpeedB = speedFactor * (max - currentLightIntensity);
-
-			roadMapA.add(motorSpeedA);
-			roadMapB.add(motorSpeedB);
-
-			
-
-			if (motorSpeedA < 0) {
-				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * 4;
-			} else {
-				Motor.A.forward();
-			}
-
-			if (motorSpeedB < 0) {
-				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * 4;
-			} else {
-				Motor.B.forward();
-			}
-
-			Motor.A.setSpeed(motorSpeedA);
-			Motor.B.setSpeed(motorSpeedB);
-
-			Delay.msDelay(100);
-
-			i++;
-		}
-
-		Motor.A.stop();
-		Motor.B.stop();
-
 	}
 
 	private void rotateBackToBlackLine() {
@@ -94,33 +46,14 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 		
-		sp.fetchSample(lightIntensity, 0);
-		currentLightIntensity = (int) (lightIntensity[0] * 100);
-		
-		//TODO terugdraaien tot je zwart hebt gescand ipv code hieronder
-		/*
-		float motorSpeedA = speedFactor * (currentLightIntensity - min);
-		float motorSpeedB = speedFactor * (max - currentLightIntensity);
-
-		if (motorSpeedA < 0) {
-			Motor.A.backward();
-			motorSpeedA = -motorSpeedA * 4;
-		} else {
-			Motor.A.forward();
+		while (currentLightIntensity > black) {
+			sp.fetchSample(lightIntensity, 0);
+			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			Delay.msDelay(100);
 		}
 
-		if (motorSpeedB < 0) {
-			Motor.B.backward();
-			motorSpeedB = -motorSpeedB * 4;
-		} else {
-			Motor.B.forward();
-		}
+		// TODO terugdraaien tot je zwart hebt gescand ipv code hieronder
 
-		Motor.A.setSpeed(motorSpeedA);
-		Motor.B.setSpeed(motorSpeedB);
-
-		Delay.msDelay(100);
-		*/
 	}
 
 	public void calibrateColors() {
@@ -143,9 +76,9 @@ public class LineFollower extends Assignment {
 			if (calibrationValues.size() >= 25) {
 				testingDone = true;
 				Sound.beep();
-			}				
+			}
 		}
-		
+
 		// set the black(est) and white(st) values
 		for (int i = 0; i < calibrationValues.size(); i++) {
 			if (calibrationValues.get(i) < black)
@@ -156,15 +89,15 @@ public class LineFollower extends Assignment {
 		// print the values (testcode: kan later weg)
 		System.out.println("Zwartwaarde: " + black);
 		System.out.println("Witwaarde: " + white);
-		
-		//TODO: toevoegen check of er wel wit en zwart is gemeten
-		
+
+		// TODO: toevoegen check of er wel wit en zwart is gemeten
+
 		// reset motors
 		Motor.A.stop();
 		Motor.B.stop();
 
 	}
-	
+
 	public static ArrayList<Float> getRoadMapA() {
 		return roadMapA;
 	}
