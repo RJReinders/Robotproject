@@ -33,7 +33,9 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		while (true) {
+		int i = 0;
+		
+		while (i < 1000) {
 			Motor.A.forward();
 			Motor.B.forward();
 		
@@ -45,7 +47,10 @@ public class LineFollower extends Assignment {
 		
 			roadMapA.add(motorSpeedA);
 			roadMapB.add(motorSpeedB);
-		
+			
+			System.out.println(roadMapA.get(i));
+			System.out.println(roadMapB.get(i));
+			
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA * 4;
@@ -63,12 +68,13 @@ public class LineFollower extends Assignment {
 			Motor.A.setSpeed(motorSpeedA);
 			Motor.B.setSpeed(motorSpeedB);
 			
-			System.out.println(currentLightIntensity);
+			// System.out.println(currentLightIntensity);
 		
+			i++;
 		}
 	
-		// Motor.A.stop();
-		// Motor.B.stop();
+		Motor.A.stop();
+		Motor.B.stop();
 	
 	}
 

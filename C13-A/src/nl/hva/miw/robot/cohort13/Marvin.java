@@ -2,6 +2,7 @@ package nl.hva.miw.robot.cohort13;
 
 import assignments.Assignment;
 import assignments.LineFollower;
+import assignments.PathFinder;
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
@@ -16,6 +17,7 @@ public class Marvin {
 	Brick brick;
 	TouchStop stopknop = new TouchStop();
 	Assignment lineFollower = new LineFollower();
+	Assignment pathFinder = new PathFinder();
 
 	public Marvin() {
 		super();
@@ -46,7 +48,8 @@ public class Marvin {
 		Sound.twoBeeps();
 
 		System.out.println("Menu");
-		System.out.println("Links = LineFollower()");
+		System.out.println("L = LineFollower()");
+		System.out.println("R = PathFinder()");
 
 		int pressedButton = Button.waitForAnyEvent();
 
@@ -55,6 +58,7 @@ public class Marvin {
 			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			System.out.println("Rechts");
+			pathFinder.run();
 		} else if (pressedButton == Button.ID_UP) {
 			System.out.println("Boven");
 		} else if (pressedButton == Button.ID_DOWN) {

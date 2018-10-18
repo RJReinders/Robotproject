@@ -26,6 +26,9 @@ public class PathFinder extends Assignment {
 
 			float motorSpeedA = roadMapA.get(i);
 			float motorSpeedB = roadMapB.get(i);
+
+			System.out.println(roadMapA.get(i));
+			System.out.println(roadMapB.get(i));
 			
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
@@ -45,6 +48,9 @@ public class PathFinder extends Assignment {
 			Motor.B.setSpeed(motorSpeedB);
 			
 		}
+		
+		Motor.A.stop();
+		Motor.B.stop();
 		
 	}
 
