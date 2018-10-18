@@ -101,8 +101,8 @@ public class LineFollower extends Assignment {
 			// rotate slightly
 			Motor.A.backward();
 			Motor.B.forward();
-			Motor.A.setSpeed(10);
-			Motor.B.setSpeed(10);
+			Motor.A.setSpeed(80);
+			Motor.B.setSpeed(80);
 			Delay.msDelay(500);
 			// continue until number of samples is collected
 			if (calibrationValues.size() >= 20)
@@ -119,7 +119,7 @@ public class LineFollower extends Assignment {
 		// print the values
 		System.out.println(black);
 		System.out.println(white);
-		Button.waitForAnyPress();
+
 	}
 
 	
