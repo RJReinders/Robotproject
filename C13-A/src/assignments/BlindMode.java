@@ -3,14 +3,15 @@ package assignments;
 import java.util.ArrayList;
 
 import lejos.hardware.motor.Motor;
+import lejos.utility.Delay;
 
-public class PathFinder extends Assignment {
+public class BlindMode extends Assignment {
 
 	private final int DEFAULT_SPEED = 50;
 	ArrayList<Float> roadMapA = LineFollower.getRoadMapA();
 	ArrayList<Float> roadMapB = LineFollower.getRoadMapB();
 		
-	public PathFinder() {
+	public BlindMode() {
 		
 	}
 	
@@ -46,6 +47,8 @@ public class PathFinder extends Assignment {
 		
 			Motor.A.setSpeed(motorSpeedA);
 			Motor.B.setSpeed(motorSpeedB);
+			
+			Delay.msDelay(100);
 			
 		}
 		

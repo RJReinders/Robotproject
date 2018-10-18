@@ -6,13 +6,16 @@ import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 
 public class LineFollower extends Assignment {
 
 	
 	private final int DEFAULT_SPEED = 50;
-	private int min = 12;
-	private int max = 40;
+	private int white = 50;
+	private int black = 6;
+	private int min = black + 7;
+	private int max = white - 7;
 	private float currentLightIntensity;
 	// private int Mspeed = 10;
 	private int Mspeed2 = 10;
@@ -67,6 +70,8 @@ public class LineFollower extends Assignment {
 		
 			Motor.A.setSpeed(motorSpeedA);
 			Motor.B.setSpeed(motorSpeedB);
+			
+			Delay.msDelay(100);
 			
 			// System.out.println(currentLightIntensity);
 		
