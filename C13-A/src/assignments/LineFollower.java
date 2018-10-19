@@ -48,13 +48,14 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		int i = 0;
+		// int i = 0;
 
-		findBlueLine.start();
+		// findBlueLine.start();
 
-		while (!findBlueLine.getFinished()) {
-			Motor.A.backward();
-			Motor.B.forward();
+		Motor.A.forward();
+		Motor.B.forward();
+
+		while (true) {
 
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
@@ -90,12 +91,12 @@ public class LineFollower extends Assignment {
 			// System.out.println(currentLightIntensity);
 		}
 
-		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+		//System.out.println("Tracktime = " + findBlueLine.getTrackTime());
 
-		findBlueLine.endThread();
+		//findBlueLine.endThread();
 
-		Motor.A.stop();
-		Motor.B.stop();
+		//Motor.A.stop();
+		//Motor.B.stop();
 	}
 
 	private void rotateBackToBlackLine() {
@@ -103,7 +104,7 @@ public class LineFollower extends Assignment {
 		Motor.B.forward();
 		Motor.A.setSpeed(100);
 		Motor.B.setSpeed(100);
-		
+
 		boolean greyLineFound = false;
 		while (!greyLineFound) {
 			sp.fetchSample(lightIntensity, 0);
@@ -114,14 +115,7 @@ public class LineFollower extends Assignment {
 			}
 		}
 		Motor.A.stop();
-		Motor.B.stop();	
-		Motor.A.forward();
-		Motor.B.backward();
-		Motor.A.setSpeed(100);
-		Motor.B.setSpeed(100);
-		Delay.msDelay(1000);
-		Motor.A.stop();
-		Motor.B.stop();	
+		Motor.B.stop();
 
 	}
 
@@ -131,19 +125,19 @@ public class LineFollower extends Assignment {
 		ArrayList<Float> calibrationValues = new ArrayList<>();
 		boolean testingDone = false;
 		final int TEST_SAMPLES = 25;
-		
+
 		// start rotating (clockwise)
 		Motor.A.forward();
 		Motor.B.backward();
 		Motor.A.setSpeed(100);
 		Motor.B.setSpeed(100);
-		
+
 		// making test readings
 		while (!testingDone) {
 			// add test sample then wait
 			colorSensor.setCurrentMode("Red");
 			sp.fetchSample(lightIntensity, 0);
-			calibrationValues.add(lightIntensity[0] * 100);			
+			calibrationValues.add(lightIntensity[0] * 100);
 			Delay.msDelay(250);
 
 			// continue until number of samples is collected
@@ -160,14 +154,19 @@ public class LineFollower extends Assignment {
 			if (calibrationValues.get(i) > white)
 				white = calibrationValues.get(i).intValue();
 		}
+		// calibreren van de 'effectieve baan'
+		//deviation = (white - black) / 5;
+		
 		blackBorder = black + DEVIATION;
-		whiteBorder = white - DEVIATION;
+		whiteBorder = white - (2 * DEVIATION);
+		//percentueel scherpere correctie op wit toegevoegd
 
 		// print the values (testcode: kan later weg)
 		System.out.println("Zwartwaarde: " + black);
 		System.out.println("Witwaarde: " + white);
+		System.out.printf("Binnenbaan van %d tot %d", black + DEVIATION, white - (2 *DEVIATION));
+		System.out.println();
 
-		
 		if (white / black > 0.90 && white / black < 1.10) {
 			System.out.println("Geen twee kleuren gemeten!");
 			Sound.beep();
