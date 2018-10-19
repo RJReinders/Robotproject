@@ -2,6 +2,8 @@ package assignments;
 
 // imports
 import java.util.ArrayList;
+
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
@@ -50,12 +52,12 @@ public class LineFollower extends Assignment {
 
 		// int i = 0;
 
-		// findBlueLine.start();
+		findBlueLine.start();
 
 		Motor.A.forward();
 		Motor.B.forward();
 
-		while (true) {
+		while (!findBlueLine.getFinished()) {
 
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
@@ -91,12 +93,14 @@ public class LineFollower extends Assignment {
 			// System.out.println(currentLightIntensity);
 		}
 
-		//System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
 
-		//findBlueLine.endThread();
+		findBlueLine.endThread();
 
-		//Motor.A.stop();
-		//Motor.B.stop();
+		Motor.A.stop();
+		Motor.B.stop();
+		
+		Button.waitForAnyEvent();
 	}
 
 	private void rotateBackToBlackLine() {
