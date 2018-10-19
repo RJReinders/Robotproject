@@ -2,6 +2,8 @@ package assignments;
 
 // imports
 import java.util.ArrayList;
+
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
@@ -15,10 +17,10 @@ public class LineFollower extends Assignment {
 	// attributes: engine
 	private final int DEFAULT_SPEED = 50;
 	private final int DEVIATION = 7;
-	private static int white = 100;
-	private static int black = 0;
-	private int min = black + DEVIATION;
-	private int max = white - DEVIATION;
+	private static int white = 1;
+	private static int black = 100;
+	private int blackBorder;
+	private int whiteBorder;
 	private int currentLightIntensity;
 	private int speedFactor = 10;
 
@@ -48,19 +50,20 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		int i = 0;
+		// int i = 0;
 
 		findBlueLine.start();
 
+		Motor.A.forward();
+		Motor.B.forward();
+
 		while (!findBlueLine.getFinished()) {
-			Motor.A.forward();
-			Motor.B.forward();
 
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
 
-			float motorSpeedA = speedFactor * (currentLightIntensity - min);
-			float motorSpeedB = speedFactor * (max - currentLightIntensity);
+			float motorSpeedA = speedFactor * (currentLightIntensity - blackBorder);
+			float motorSpeedB = speedFactor * (whiteBorder - currentLightIntensity);
 
 			roadMapA.add(motorSpeedA);
 			roadMapB.add(motorSpeedB);
@@ -96,41 +99,53 @@ public class LineFollower extends Assignment {
 
 		Motor.A.stop();
 		Motor.B.stop();
+		
+		Button.waitForAnyEvent();
 	}
 
 	private void rotateBackToBlackLine() {
 		Motor.A.backward();
 		Motor.B.forward();
-		Motor.A.setSpeed(DEFAULT_SPEED);
-		Motor.B.setSpeed(DEFAULT_SPEED);
+		Motor.A.setSpeed(100);
+		Motor.B.setSpeed(100);
 
-		sp.fetchSample(lightIntensity, 0);
-		currentLightIntensity = (int) (lightIntensity[0] * 100);
+		boolean greyLineFound = false;
+		while (!greyLineFound) {
+			sp.fetchSample(lightIntensity, 0);
+			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			if (currentLightIntensity < blackBorder) {
+				greyLineFound = true;
+				Sound.buzz();
+			}
+		}
+		Motor.A.stop();
+		Motor.B.stop();
 
-		// TODO terugdraaien tot je zwart hebt gescand ipv code hieronder
 	}
 
 	public void calibrateColors() {
 
 		// local variables
 		ArrayList<Float> calibrationValues = new ArrayList<>();
-		colorSensor.setCurrentMode("Red");
 		boolean testingDone = false;
+		final int TEST_SAMPLES = 25;
+
+		// start rotating (clockwise)
+		Motor.A.forward();
+		Motor.B.backward();
+		Motor.A.setSpeed(100);
+		Motor.B.setSpeed(100);
 
 		// making test readings
 		while (!testingDone) {
-			// add test sample
+			// add test sample then wait
+			colorSensor.setCurrentMode("Red");
 			sp.fetchSample(lightIntensity, 0);
 			calibrationValues.add(lightIntensity[0] * 100);
-			// rotate slightly
-			Motor.A.forward();
-			Motor.B.backward();
-			Motor.A.setSpeed(100);
-			Motor.B.setSpeed(100);
 			Delay.msDelay(250);
 
 			// continue until number of samples is collected
-			if (calibrationValues.size() >= 25) {
+			if (calibrationValues.size() >= TEST_SAMPLES) {
 				testingDone = true;
 				Sound.beep();
 			}
@@ -143,13 +158,24 @@ public class LineFollower extends Assignment {
 			if (calibrationValues.get(i) > white)
 				white = calibrationValues.get(i).intValue();
 		}
+		// calibreren van de 'effectieve baan'
+		//deviation = (white - black) / 5;
+		
+		blackBorder = black + DEVIATION;
+		whiteBorder = white - (2 * DEVIATION);
+		//percentueel scherpere correctie op wit toegevoegd
 
 		// print the values (testcode: kan later weg)
 		System.out.println("Zwartwaarde: " + black);
 		System.out.println("Witwaarde: " + white);
+		System.out.printf("Binnenbaan van %d tot %d", black + DEVIATION, white - (2 *DEVIATION));
+		System.out.println();
 
-		// TODO: toevoegen check of er wel wit en zwart is gemeten
-
+		if (white / black > 0.90 && white / black < 1.10) {
+			System.out.println("Geen twee kleuren gemeten!");
+			Sound.beep();
+			calibrateColors();
+		}
 		// reset motors
 		Motor.A.stop();
 		Motor.B.stop();
