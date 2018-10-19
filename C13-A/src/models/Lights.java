@@ -15,9 +15,9 @@ public class Lights {
 	public void brickLights(int pattern, int delay) {
 
 		Button.LEDPattern(pattern);
-		Delay.msDelay(delay);
-		File wavFile = new File("we.wav");
-		Sound.playSample(wavFile, 60);
+		//Delay.msDelay(delay);
+		//File wavFile = new File("we.wav");
+		//Sound.playSample(wavFile, 60);
 	}
 
 }

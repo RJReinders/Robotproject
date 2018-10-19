@@ -8,6 +8,8 @@ import assignments.Test;
 import models.TouchStop;
 import models.CsvFile;
 import models.Lights;
+import models.ArmRotation;
+import models.FollowMe;
 
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
@@ -18,15 +20,19 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
 
 // NOTE Reinder: ik heb de stopknop en linefollower outgecomment
+
 public class Marvin {
 
 	Brick brick;
-	//TouchStop stopknop = new TouchStop();
+	// TouchStop stopknop = new TouchStop();
+
 	Assignment lineFollower = new LineFollower();
 	Assignment blindMode = new BlindMode();
 	CsvFile csvFile = new CsvFile();
 	Lights lights = new Lights();
 	Test testProgram = new Test();
+	ArmRotation armRotation = new ArmRotation();
+	FollowMe followme = new FollowMe();
 
 	public Marvin() {
 		super();
@@ -39,13 +45,12 @@ public class Marvin {
 	}
 
 	private void run() {
-		
-		//stopknop.start();
-		
+
+		// stopknop.start();
 
 		while (true) {
 			waitForKeyPress();
-			
+
 		}
 
 	}
@@ -57,20 +62,24 @@ public class Marvin {
 		System.out.println("Menu");
 		System.out.println("L = LineFollower");
 		System.out.println("R = Blindmode");
-		System.out.println("U = CsvFile");
+		System.out.println("U = FolowMe");
 		System.out.println("D = Test");
 
 		int pressedButton = Button.waitForAnyEvent();
 
 		if (pressedButton == Button.ID_LEFT) {
 			System.out.println("Links");
-			lineFollower.run();
+			//lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			System.out.println("Rechts");
-			blindMode.run();
+			//blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
 			System.out.println("Boven");
-			csvFile.check();
+// 			csvFile.check();
+//			armRotation.rotateArm(90);
+//			armRotation.rotateArm(0);
+//			lights.brickLights(0, 150);
+			followme.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 			System.out.println("Onder");
 			testProgram.run();
