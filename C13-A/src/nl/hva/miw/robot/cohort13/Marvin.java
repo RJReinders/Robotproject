@@ -3,6 +3,7 @@ package nl.hva.miw.robot.cohort13;
 import assignments.Assignment;
 import assignments.LineFollower;
 import assignments.BlindMode;
+import assignments.Test;
 
 import models.TouchStop;
 import models.CsvFile;
@@ -16,16 +17,16 @@ import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
 
-
-
+// NOTE Reinder: ik heb de stopknop outgecomment
 public class Marvin {
 
 	Brick brick;
-	TouchStop stopknop = new TouchStop();
+	//TouchStop stopknop = new TouchStop();
 	Assignment lineFollower = new LineFollower();
 	Assignment blindMode = new BlindMode();
 	CsvFile csvFile = new CsvFile();
 	Lights lights = new Lights();
+	Test testProgram = new Test();
 
 	public Marvin() {
 		super();
@@ -39,7 +40,7 @@ public class Marvin {
 
 	private void run() {
 		
-		stopknop.start();
+		//stopknop.start();
 		
 
 		while (true) {
@@ -72,11 +73,11 @@ public class Marvin {
 			csvFile.check();
 		} else if (pressedButton == Button.ID_DOWN) {
 			System.out.println("Onder");
-			lights.brickLights(0, 150);
+			testProgram.run();
 		} else if (pressedButton == Button.ID_ENTER) {
 			System.out.println("Enter");
 		} else if (pressedButton == Button.ID_ESCAPE) {
-			stopknop.endThread();
+			//stopknop.endThread();
 			System.exit(0);
 		}
 
