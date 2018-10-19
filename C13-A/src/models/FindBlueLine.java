@@ -23,6 +23,7 @@ public class FindBlueLine extends Thread {
 	boolean finished = false;
 	int trackTime;
 	
+	
 	public FindBlueLine(EV3ColorSensor colorSensor) {
 		this.colorSensor = colorSensor;
 	}
@@ -30,28 +31,33 @@ public class FindBlueLine extends Thread {
 	@Override
 	public void run() {
 
-		while(!finished) {
+		//while(!finished) {
 		
 			colorSensor.setCurrentMode("ColorID");
 			
 			currentColor = colorSensor.getColorID();
 			
+
 			if (currentColor == BLUE && start == false) {
 				stopwatch.reset();
 				start = true;
 				Sound.beep();
-				Delay.msDelay(2000);
+				Delay.msDelay(1000);
+				System.out.println(colorSensor.getRGBMode());
+				
 			} else if (currentColor == BLUE) {
 				Sound.beep();
-				trackTime = stopwatch.elapsed();
+				trackTime = (int) (stopwatch.elapsed()/1000);
 				System.out.println(trackTime);
 				finished = true;
+				System.out.println(colorSensor.getRGBMode());
+				
 			}
 			
 			colorSensor.setCurrentMode("Red");
 			
-			Delay.msDelay(200);
-		}
+			//Delay.msDelay(200);
+		//}
 		
 	}
 	

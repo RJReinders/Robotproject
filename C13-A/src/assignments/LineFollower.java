@@ -43,21 +43,31 @@ public class LineFollower extends Assignment {
 	public void run() {
 		calibrateColors();
 		rotateBackToBlackLine();
-		followLine();
+		while(!findBlueLine.getFinished()) {
+			followLine();
+			followLine();
+			findBlueLine.run();
+
+		}
+		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+
+		//findBlueLine.endThread();
+
+		Motor.A.stop();
+		Motor.B.stop();
+		
+		Button.waitForAnyEvent();
+		
 	}
 
 	public void followLine() {
-		Motor.A.setSpeed(DEFAULT_SPEED);
-		Motor.B.setSpeed(DEFAULT_SPEED);
 
 		// int i = 0;
 
-		findBlueLine.start();
+		//findBlueLine.start();
 
-		Motor.A.forward();
-		Motor.B.forward();
 
-		while (!findBlueLine.getFinished()) {
+		//while (!findBlueLine.getFinished()) {
 
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
@@ -73,34 +83,26 @@ public class LineFollower extends Assignment {
 
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * 4;
+				motorSpeedA = -motorSpeedA * 3;
 			} else {
 				Motor.A.forward();
 			}
 
 			if (motorSpeedB < 0) {
 				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * 4;
+				motorSpeedB = -motorSpeedB * 3;
 			} else {
 				Motor.B.forward();
 			}
 
-			Motor.A.setSpeed(motorSpeedA);
-			Motor.B.setSpeed(motorSpeedB);
+			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
 
 			Delay.msDelay(100);
 
 			// System.out.println(currentLightIntensity);
-		}
+		//}
 
-		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
-
-		findBlueLine.endThread();
-
-		Motor.A.stop();
-		Motor.B.stop();
-		
-		Button.waitForAnyEvent();
 	}
 
 	private void rotateBackToBlackLine() {
@@ -120,6 +122,10 @@ public class LineFollower extends Assignment {
 		}
 		Motor.A.stop();
 		Motor.B.stop();
+		Motor.A.setSpeed(DEFAULT_SPEED);
+		Motor.B.setSpeed(DEFAULT_SPEED);
+		Motor.A.forward();
+		Motor.B.forward();
 
 	}
 
@@ -162,7 +168,7 @@ public class LineFollower extends Assignment {
 		//deviation = (white - black) / 5;
 		
 		blackBorder = black + DEVIATION;
-		whiteBorder = white - (2 * DEVIATION);
+		whiteBorder = white - DEVIATION;
 		//percentueel scherpere correctie op wit toegevoegd
 
 		// print the values (testcode: kan later weg)
