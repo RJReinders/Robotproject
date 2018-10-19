@@ -17,7 +17,7 @@ import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
 
-// NOTE Reinder: ik heb de stopknop outgecomment
+// NOTE Reinder: ik heb de stopknop en linefollower outgecomment
 public class Marvin {
 
 	Brick brick;
@@ -58,7 +58,7 @@ public class Marvin {
 		System.out.println("L = LineFollower");
 		System.out.println("R = Blindmode");
 		System.out.println("U = CsvFile");
-		System.out.println("D = Lights");
+		System.out.println("D = Test");
 
 		int pressedButton = Button.waitForAnyEvent();
 
