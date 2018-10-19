@@ -2,6 +2,8 @@ package assignments;
 
 // imports
 import java.util.ArrayList;
+
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
@@ -96,6 +98,8 @@ public class LineFollower extends Assignment {
 
 		Motor.A.stop();
 		Motor.B.stop();
+		
+		Button.waitForAnyEvent();
 	}
 
 	private void rotateBackToBlackLine() {
