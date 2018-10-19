@@ -10,7 +10,7 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import models.FindBlueLine;
 
-public class LineFollower extends Assignment {
+public class Test extends Assignment {
 
 	// attributes: engine
 	private final int DEFAULT_SPEED = 50;
@@ -33,15 +33,15 @@ public class LineFollower extends Assignment {
 
 	FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
 
-	public LineFollower() {
+	public Test() {
 
 	}
 
 	@Override
 	public void run() {
 		calibrateColors();
-		rotateBackToBlackLine();
-		followLine();
+		//rotateBackToBlackLine();
+		//followLine();
 	}
 
 	public void followLine() {
@@ -96,7 +96,6 @@ public class LineFollower extends Assignment {
 
 		Motor.A.stop();
 		Motor.B.stop();
-
 	}
 
 	private void rotateBackToBlackLine() {
@@ -105,17 +104,10 @@ public class LineFollower extends Assignment {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-
-		while (currentLightIntensity > black + 7) {
-			sp.fetchSample(lightIntensity, 0);
-			currentLightIntensity = (int) (lightIntensity[0] * 100);
-			Delay.msDelay(100);
-		}
-		Motor.A.stop();
-		Motor.B.stop();
+		sp.fetchSample(lightIntensity, 0);
+		currentLightIntensity = (int) (lightIntensity[0] * 100);
 
 		// TODO terugdraaien tot je zwart hebt gescand ipv code hieronder
-
 	}
 
 	public void calibrateColors() {
@@ -151,10 +143,6 @@ public class LineFollower extends Assignment {
 			if (calibrationValues.get(i) > white)
 				white = calibrationValues.get(i).intValue();
 		}
-
-		// update our min and max
-		min = black + DEVIATION;
-		max = white - DEVIATION;
 
 		// print the values (testcode: kan later weg)
 		System.out.println("Zwartwaarde: " + black);
