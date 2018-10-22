@@ -47,13 +47,12 @@ public class LineFollower extends Assignment {
 
 		while (!findBlueLine.getFinished()) {
 			followLine();
-			followLine();
 			findBlueLine.run();
 
 		}
 		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
 
-		// findBlueLine.endThread();
+		findBlueLine.endThread();
 
 		Motor.A.stop();
 		Motor.B.stop();
@@ -63,66 +62,68 @@ public class LineFollower extends Assignment {
 	}
 
 	public void followLine() {
-		
+
 		final int REVERSE_SPEEDFACTOR = 3;
-		
-		// findBlueLine.start();
-		// while (!findBlueLine.getFinished()) {
-		
-		
-		// take color sample
-		sp.fetchSample(lightIntensity, 0);
-		currentLightIntensity = (int) (lightIntensity[0] * 100);
-		LCD.drawString("    ", 0, 5);
-		LCD.drawInt(currentLightIntensity, 0, 5);
 
-		// NOTE eerst formule, dan FW/BW, dan default speed erbij!
-		// NOTE acceleratie voor of na het flippen van de motor?
-		float motorSpeedA = (int)(speedFactor * (currentLightIntensity - blackBorder));
-		float motorSpeedB = (int)(speedFactor * (whiteBorder - currentLightIntensity));
+		findBlueLine.start();
+		while (!findBlueLine.getFinished()) {
 
-		// if (almost) straight line, true accelerate
-				
-		if(Math.abs(motorSpeedA - motorSpeedB) < 40) {
-			acceleration += 10;
-			lights.brickLights(1, 150);
-		}								
-		else {
-			acceleration = 10;
-			lights.brickLights(2, 150);
+			// take color sample
+			sp.fetchSample(lightIntensity, 0);
+			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			LCD.drawString("    ", 0, 5);
+			LCD.drawInt(currentLightIntensity, 0, 5);
+
+			// NOTE eerst formule, dan FW/BW, dan default speed erbij!
+			// NOTE acceleratie voor of na het flippen van de motor?
+			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder));
+			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
+
+			// if (almost) straight line, true accelerate
+
+			if (motorSpeedA / motorSpeedB > 0.75 && motorSpeedA / motorSpeedB < 1.25) {
+				acceleration += 10;
+				if (acceleration > 100)
+					acceleration = 100;
+				lights.brickLights(1, 150);
+			} else {
+				acceleration -= 10;
+				if (acceleration < 10)
+					acceleration = 10;
+				lights.brickLights(2, 150);
+			}
+
+			if (motorSpeedA < 0) {
+				Motor.A.backward();
+				motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
+			} else {
+				Motor.A.forward();
+				motorSpeedA += acceleration;
+			}
+
+			if (motorSpeedB < 0) {
+				Motor.B.backward();
+				motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
+			} else {
+				Motor.B.forward();
+				motorSpeedB += acceleration;
+			}
+
+			LCD.clear();
+			LCD.drawInt((int) motorSpeedA, 0, 7);
+			LCD.drawInt((int) motorSpeedB, 12, 7);
+			LCD.drawInt((int) acceleration, 7, 7);
+			motorSpeedA += DEFAULT_SPEED;
+			motorSpeedB += DEFAULT_SPEED;
+
+			// N.B. roadMAP onthoudt niet forward of backward
+			roadMapA.add(motorSpeedA);
+			roadMapB.add(motorSpeedB);
+
+			Motor.A.setSpeed(motorSpeedA);
+			Motor.B.setSpeed(motorSpeedB);
+			Delay.msDelay(50);
 		}
-		
-		if (motorSpeedA < 0) {
-			Motor.A.backward();
-			motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
-		} else {
-			Motor.A.forward();
-			motorSpeedA += acceleration;
-		}
-
-		if (motorSpeedB < 0) {
-			Motor.B.backward();
-			motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
-		} else {
-			Motor.B.forward();
-			motorSpeedB += acceleration;
-		}
-
-		LCD.clear();
-		LCD.drawInt((int)motorSpeedA, 0, 7);
-		LCD.drawInt((int)motorSpeedB, 12, 7);
-		LCD.drawInt((int)acceleration, 7, 7);
-		motorSpeedA += DEFAULT_SPEED;
-		motorSpeedB += DEFAULT_SPEED;
-	
-		//N.B. roadMAP onthoudt niet forward of backward
-		roadMapA.add(motorSpeedA);
-		roadMapB.add(motorSpeedB);
-		
-		Motor.A.setSpeed(motorSpeedA);
-		Motor.B.setSpeed(motorSpeedB);
-		Delay.msDelay(50);
-
 	}
 
 	private void rotateBackToBlackLine() {
