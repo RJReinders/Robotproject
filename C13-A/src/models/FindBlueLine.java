@@ -30,13 +30,15 @@ public class FindBlueLine extends Thread {
 	
 	@Override
 	public void run() {
-
+/*
 		//while(!finished) {
 		
 			colorSensor.setCurrentMode("ColorID");
 			
 			currentColor = colorSensor.getColorID();
-			
+			//TESTVAR REINDER
+			start = false;
+			finished = false;
 
 			if (currentColor == BLUE && start == false) {
 				stopwatch.reset();
@@ -58,7 +60,7 @@ public class FindBlueLine extends Thread {
 			
 			//Delay.msDelay(200);
 		//}
-		
+	*/	
 	}
 	
 	public boolean getFinished() {

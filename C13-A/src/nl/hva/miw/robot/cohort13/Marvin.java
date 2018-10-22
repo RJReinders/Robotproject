@@ -19,12 +19,10 @@ import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
 
-// NOTE Reinder: ik heb de stopknop en linefollower outgecomment
-
 public class Marvin {
 
 	Brick brick;
-	// TouchStop stopknop = new TouchStop();
+	//TouchStop stopknop = new TouchStop();
 
 	Assignment lineFollower = new LineFollower();
 	Assignment blindMode = new BlindMode();
@@ -46,7 +44,7 @@ public class Marvin {
 
 	private void run() {
 
-		// stopknop.start();
+		//stopknop.start();
 
 		while (true) {
 			waitForKeyPress();
@@ -62,14 +60,22 @@ public class Marvin {
 		System.out.println("Menu");
 		System.out.println("L = LineFollower");
 		System.out.println("R = Blindmode");
-		System.out.println("U = FolowMe");
+		System.out.println("U = FollowMe");
 		System.out.println("D = Test");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 
 		int pressedButton = Button.waitForAnyEvent();
 
 		if (pressedButton == Button.ID_LEFT) {
 			System.out.println("Links");
-			//lineFollower.run();
+			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			System.out.println("Rechts");
 			//blindMode.run();
