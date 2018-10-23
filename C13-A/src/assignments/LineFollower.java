@@ -16,16 +16,17 @@ public class LineFollower extends Assignment {
 
 	// attributes: engine
 	private final int DEFAULT_SPEED = 50;
-	private static int white = 1;
-	private static int black = 100;
-	private static int acceleration = 10;
+	private final int REVERSE_SPEEDFACTOR = 3;
+	private int white = 1;
+	private int black = 100;
+	private int acceleration = 10;
 	private int blackBorder;
 	private int whiteBorder;
 	private int currentLightIntensity;
-	private double speedFactor = 3.5;
+	private double speedFactor = 3.0;
 
 	// attributes: color sensor
-	private EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
+	private EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
 	private SampleProvider sp = colorSensor.getRedMode();
 	private float[] lightIntensity = new float[sp.sampleSize()];
 
@@ -62,10 +63,10 @@ public class LineFollower extends Assignment {
 	}
 
 	public void followLine() {
-
-		final int REVERSE_SPEEDFACTOR = 3;
-
+		// start second thread to find Blue Line
 		findBlueLine.start();
+		
+		// loop until we have finished
 		while (!findBlueLine.getFinished()) {
 
 			// take color sample
@@ -76,24 +77,23 @@ public class LineFollower extends Assignment {
 
 			// NOTE eerst formule, dan FW/BW, dan default speed erbij!
 			// NOTE acceleratie voor of na het flippen van de motor?
-			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder));
-			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
+			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder) + 70);
+			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity) + 70);
 
-			// if (almost) straight line, true accelerate
-
-			if (motorSpeedA / motorSpeedB > 0.75 && motorSpeedA / motorSpeedB < 1.25) {
+			// if (almost) straight line, accelerate
+			if (motorSpeedA / motorSpeedB > 0.60 && motorSpeedA / motorSpeedB < 1.40) {
 				acceleration += 10;
-				if (acceleration > 100)
-					acceleration = 100;
+				if (acceleration > 300)
+					acceleration = 300;
 				lights.brickLights(1, 150);
 			} else {
-				acceleration -= 10;
+				acceleration -= 40;
 				if (acceleration < 10)
 					acceleration = 10;
 				lights.brickLights(2, 150);
 			}
 
-			if (motorSpeedA < 0) {
+			if (motorSpeedA < 70) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
 			} else {
@@ -101,7 +101,7 @@ public class LineFollower extends Assignment {
 				motorSpeedA += acceleration;
 			}
 
-			if (motorSpeedB < 0) {
+			if (motorSpeedB < 70) {
 				Motor.B.backward();
 				motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
 			} else {
@@ -113,10 +113,8 @@ public class LineFollower extends Assignment {
 			LCD.drawInt((int) motorSpeedA, 0, 7);
 			LCD.drawInt((int) motorSpeedB, 12, 7);
 			LCD.drawInt((int) acceleration, 7, 7);
-			motorSpeedA += DEFAULT_SPEED;
-			motorSpeedB += DEFAULT_SPEED;
 
-			// N.B. roadMAP onthoudt niet forward of backward
+			// N.B. roadMap onthoudt niet forward of backward
 			roadMapA.add(motorSpeedA);
 			roadMapB.add(motorSpeedB);
 
@@ -127,11 +125,11 @@ public class LineFollower extends Assignment {
 	}
 
 	private void rotateBackToBlackLine() {
-		// backwards rotation, double speed
+		// backwards rotation, extra speed
 		Motor.A.backward();
 		Motor.B.forward();
-		Motor.A.setSpeed(200);
-		Motor.B.setSpeed(200);
+		Motor.A.setSpeed(150);
+		Motor.B.setSpeed(150);
 
 		// find the grey line
 		boolean greyLineFound = false;

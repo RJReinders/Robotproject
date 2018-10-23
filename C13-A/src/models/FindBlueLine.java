@@ -30,7 +30,7 @@ public class FindBlueLine extends Thread {
 
 	@Override
 	public void run() {
-
+/*
 		while (!finished) {
 			int blueGemeten;
 			SampleProvider colorRGB = colorSensor.getRGBMode();
@@ -55,7 +55,7 @@ public class FindBlueLine extends Thread {
 			colorSensor.setCurrentMode("Red");
 			
 		}
-
+*/
 	}
 
 	public boolean getFinished() {
