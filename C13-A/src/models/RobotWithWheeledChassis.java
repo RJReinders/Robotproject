@@ -52,48 +52,97 @@ public class RobotWithWheeledChassis {
 			this.moveSquaresForward(3);
 			break;
 		case 2:
-			this.rotateLeft();
-			this.moveSquaresForward(1);
 			this.rotateRight();
+			this.moveSquaresForward(1);
+			this.rotateLeft();
 			this.moveSquaresForward(3);
 			break;
 		case 3:
-			this.rotateLeft();
-			this.moveSquaresForward(2);
 			this.rotateRight();
+			this.moveSquaresForward(2);
+			this.rotateLeft();
 			this.moveSquaresForward(3);
 			break;
 		case 4:
 			this.moveSquaresForward(2);
 			break;
 		case 5:
-			this.rotateLeft();
-			this.moveSquaresForward(1);
 			this.rotateRight();
+			this.moveSquaresForward(1);
+			this.rotateLeft();
 			this.moveSquaresForward(2);
 			break;
 		case 6:
-			this.rotateLeft();
-			this.moveSquaresForward(2);
 			this.rotateRight();
+			this.moveSquaresForward(2);
+			this.rotateLeft();
 			this.moveSquaresForward(2);
 			break;
 		case 7:
 			this.moveSquaresForward(1);
 			break;
 		case 8:
-			this.rotateLeft();
-			this.moveSquaresForward(1);
 			this.rotateRight();
+			this.moveSquaresForward(1);
+			this.rotateLeft();
 			this.moveSquaresForward(1);
 			break;
 		case 9:
-			this.rotateLeft();
-			this.moveSquaresForward(2);
 			this.rotateRight();
+			this.moveSquaresForward(2);
+			this.rotateLeft();
 			this.moveSquaresForward(1);
 			break;
 		}
 	}
 
+	public void returnFromSquareNumber(int number) {
+		switch (number) {
+		case 1:
+			this.moveSquaresBackward(3);
+			break;
+		case 2:
+			this.moveSquaresBackward(3);
+			this.rotateRight();
+			this.moveSquaresBackward(1);
+			this.rotateLeft();
+			break;
+		case 3:
+			this.moveSquaresBackward(3);
+			this.rotateRight();
+			this.moveSquaresBackward(2);
+			this.rotateLeft();
+			break;
+		case 4:
+			this.moveSquaresBackward(2);
+			break;
+		case 5:
+			this.moveSquaresBackward(2);
+			this.rotateRight();
+			this.moveSquaresBackward(1);
+			this.rotateLeft();
+			break;
+		case 6:
+			this.moveSquaresBackward(2);
+			this.rotateRight();
+			this.moveSquaresBackward(2);
+			this.rotateLeft();
+			break;
+		case 7:
+			this.moveSquaresBackward(1);
+			break;
+		case 8:
+			this.moveSquaresBackward(1);
+			this.rotateRight();
+			this.moveSquaresBackward(1);
+			this.rotateLeft();
+			break;
+		case 9:
+			this.moveSquaresBackward(1);
+			this.rotateRight();
+			this.moveSquaresBackward(2);
+			this.rotateLeft();
+			break;
+		}
+	}
 }
