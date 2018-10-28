@@ -15,8 +15,8 @@ import models.*;
 public class LineFollower extends Assignment {
 
 	// attributes: engine
-	private final int DEFAULT_SPEED = 70;
-	private final int REVERSE_SPEEDFACTOR = 4;
+	private final int DEFAULT_SPEED = 75;
+	private final int REVERSE_SPEEDFACTOR = 3;
 	private int white = 1;
 	private int black = 100;
 	private int acceleration = 10;
@@ -82,15 +82,15 @@ public class LineFollower extends Assignment {
 			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
 
 			// if (almost) straight line, accelerate
-			if (motorSpeedA / motorSpeedB > 0.60 && motorSpeedA / motorSpeedB < 1.40) {
-				acceleration += 10;
-				if (acceleration > 300)
-					acceleration = 300;
+			if (motorSpeedA / motorSpeedB > 0.55 && motorSpeedA / motorSpeedB < 1.45) {
+				acceleration += 15;
+				if (acceleration > 450)
+					acceleration = 450;
 				lights.brickLights(1, 150);
 			} else {
-				acceleration -= 50;
-				if (acceleration < 10)
-					acceleration = 10;
+				acceleration -= 45;
+				if (acceleration < 15)
+					acceleration = 15;
 				lights.brickLights(2, 150);
 			}
 
