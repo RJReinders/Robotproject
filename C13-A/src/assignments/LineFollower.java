@@ -15,8 +15,8 @@ import models.*;
 public class LineFollower extends Assignment {
 
 	// attributes: engine
-	private final int DEFAULT_SPEED = 50;
-	private final int REVERSE_SPEEDFACTOR = 3;
+	private final int DEFAULT_SPEED = 70;
+	private final int REVERSE_SPEEDFACTOR = 4;
 	private int white = 1;
 	private int black = 100;
 	private int acceleration = 10;
@@ -72,13 +72,14 @@ public class LineFollower extends Assignment {
 			// take color sample
 			sp.fetchSample(lightIntensity, 0);
 			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			LCD.clear();
 			LCD.drawString("    ", 0, 5);
 			LCD.drawInt(currentLightIntensity, 0, 5);
 
 			// NOTE eerst formule, dan FW/BW, dan default speed erbij!
 			// NOTE acceleratie voor of na het flippen van de motor?
-			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder) + 70);
-			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity) + 70);
+			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder));
+			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
 
 			// if (almost) straight line, accelerate
 			if (motorSpeedA / motorSpeedB > 0.60 && motorSpeedA / motorSpeedB < 1.40) {
@@ -87,13 +88,13 @@ public class LineFollower extends Assignment {
 					acceleration = 300;
 				lights.brickLights(1, 150);
 			} else {
-				acceleration -= 40;
+				acceleration -= 50;
 				if (acceleration < 10)
 					acceleration = 10;
 				lights.brickLights(2, 150);
 			}
 
-			if (motorSpeedA < 70) {
+			if (motorSpeedA < 0) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
 			} else {
@@ -101,7 +102,7 @@ public class LineFollower extends Assignment {
 				motorSpeedA += acceleration;
 			}
 
-			if (motorSpeedB < 70) {
+			if (motorSpeedB < 0) {
 				Motor.B.backward();
 				motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
 			} else {
@@ -109,7 +110,6 @@ public class LineFollower extends Assignment {
 				motorSpeedB += acceleration;
 			}
 
-			LCD.clear();
 			LCD.drawInt((int) motorSpeedA, 0, 7);
 			LCD.drawInt((int) motorSpeedB, 12, 7);
 			LCD.drawInt((int) acceleration, 7, 7);
@@ -118,18 +118,18 @@ public class LineFollower extends Assignment {
 			roadMapA.add(motorSpeedA);
 			roadMapB.add(motorSpeedB);
 
-			Motor.A.setSpeed(motorSpeedA);
-			Motor.B.setSpeed(motorSpeedB);
+			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
 			Delay.msDelay(50);
 		}
 	}
 
 	private void rotateBackToBlackLine() {
-		// backwards rotation, extra speed
-		Motor.A.backward();
+		// rotate back
+		Motor.A.forward();
 		Motor.B.forward();
-		Motor.A.setSpeed(150);
-		Motor.B.setSpeed(150);
+		Motor.A.setSpeed(10);
+		Motor.B.setSpeed(100);
 
 		// find the grey line
 		boolean greyLineFound = false;
@@ -144,7 +144,7 @@ public class LineFollower extends Assignment {
 		}
 
 		// start driving forward
-		Delay.msDelay(100);
+		Delay.msDelay(1000);
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 		Motor.A.forward();
@@ -160,11 +160,11 @@ public class LineFollower extends Assignment {
 		final int TEST_SAMPLES = 25;
 
 		// start rotating (clockwise)
-		Motor.A.forward();
+		Motor.A.backward();
 		Motor.B.backward();
-		Motor.A.setSpeed(100);
+		Motor.A.setSpeed(10);
 		Motor.B.setSpeed(100);
-
+		
 		// make test readings
 		while (!testingDone) {
 			// add test sample then wait
@@ -188,7 +188,7 @@ public class LineFollower extends Assignment {
 				white = calibrationValues.get(i).intValue();
 		}
 		// calibrate 'effective course'
-		final int DEVIATION = (white - black) / 5;
+		final int DEVIATION = ((white - black) / 4);
 		blackBorder = black + DEVIATION;
 		whiteBorder = white - DEVIATION;
 
@@ -203,14 +203,17 @@ public class LineFollower extends Assignment {
 		LCD.drawInt(white, 16, 2);
 		LCD.drawString("Deviation:", 0, 3);
 		LCD.drawInt(DEVIATION, 10, 3);
+		Delay.msDelay(2000);
 
 		// check if two color have been detected, recalibrate if necessary
-		if (white / black > 0.90 && white / black < 1.10) {
+		if (white / black > 0.80 && white / black < 1.20) {
 			LCD.drawString("Geen goede meting gedaan!", 0, 4);
 			Sound.beep();
-			Delay.msDelay(2000);
+			Delay.msDelay(1000);
 			LCD.clear();
 			calibrateColors();
+			Motor.A.stop();
+			Motor.B.stop();
 		}
 
 	}

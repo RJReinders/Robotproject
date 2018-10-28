@@ -18,7 +18,7 @@ public class Marvin {
 
 	// get our projects
 	// TouchStop stopButton = new TouchStop();
-	//Assignment lineFollower = new LineFollower();
+	Assignment lineFollower = new LineFollower();
 	//Assignment blindMode = new BlindMode();
 	//CsvFile csvFile = new CsvFile();
 	//Lights lights = new Lights();
@@ -62,7 +62,7 @@ public class Marvin {
 
 		// select user choice
 		if (pressedButton == Button.ID_LEFT) {
-			// lineFollower.run();
+			 lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			// blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
