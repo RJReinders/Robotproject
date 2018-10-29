@@ -16,14 +16,14 @@ public class Marvin {
 	// get the brick
 	Brick brick;
 
-	// Assignment lineFollower = new LineFollower();
-	// Assignment blindMode = new BlindMode();
-	// CsvFile csvFile = new CsvFile();
-	// Lights lights = new Lights();
-	 Test testProgram = new Test();
-	// ArmRotation armRotation = new ArmRotation();
-	// FollowMe followme = new FollowMe();
-	// WriteO writeO = new WriteO();
+//	Assignment lineFollower = new LineFollowerRGB();
+//	Assignment blindMode = new BlindMode();
+//	CsvFile csvFile = new CsvFile();
+//	Lights lights = new Lights();
+	Test testProgram = new Test();
+//	ArmRotation armRotation = new ArmRotation();
+//	FollowMe followme = new FollowMe();
+//	WriteO writeO = new WriteO();
 	CheckColor checkColor = new CheckColor();
 	TicTacToe ticTacToe = new TicTacToe();
 
@@ -79,7 +79,7 @@ public class Marvin {
 			// lights.brickLights(0, 150);
 			// followme.run();
 			// writeO.run();
-			checkColor.run();
+			// checkColor.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 			System.out.println("Onder");
 			// testProgram.run();
