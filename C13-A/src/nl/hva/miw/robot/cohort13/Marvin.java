@@ -16,15 +16,15 @@ public class Marvin {
 	// get the brick
 	Brick brick;
 
-	// get our projects
-	// TouchStop stopButton = new TouchStop();
 	Assignment lineFollower = new LineFollower();
-	//Assignment blindMode = new BlindMode();
-	//CsvFile csvFile = new CsvFile();
-	//Lights lights = new Lights();
-	//Test testProgram = new Test();
-	//ArmRotation armRotation = new ArmRotation();
-	//FollowMe followMe = new FollowMe();
+//	Assignment blindMode = new BlindMode();
+//	CsvFile csvFile = new CsvFile();
+//	Lights lights = new Lights();
+//	Test testProgram = new Test();
+//	ArmRotation armRotation = new ArmRotation();
+//	FollowMe followme = new FollowMe();
+//	WriteO writeO = new WriteO();
+	CheckColor checkColor = new CheckColor();
 	TicTacToe ticTacToe = new TicTacToe();
 
 	public Marvin() {
@@ -66,9 +66,23 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_RIGHT) {
 			// blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
+
 			// followMe.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 			ticTacToe.run();
+
+			System.out.println("Boven");
+// 			csvFile.check();
+//			armRotation.rotateArm(-55);
+//			Delay.msDelay(2000);
+//			armRotation.rotateArm(0);
+//			lights.brickLights(0, 150);
+//			followme.run();
+//			writeO.run();
+			checkColor.run();
+			} else if (pressedButton == Button.ID_DOWN) {
+			System.out.println("Onder");
+//			testProgram.run();
 		} else if (pressedButton == Button.ID_ENTER) {
 			// enter restarts the menu			
 			waitForKeyPress();
