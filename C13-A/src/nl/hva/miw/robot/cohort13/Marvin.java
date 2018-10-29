@@ -16,12 +16,17 @@ public class Marvin {
 	// get the brick
 	Brick brick;
 
-	Assignment lineFollower = new LineFollower();
+//	Assignment lineFollower = new LineFollowerRGB();
 //	Assignment blindMode = new BlindMode();
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
+<<<<<<< HEAD
 //	Test testProgram = new Test();
 	ArmRotation armRotation = new ArmRotation();
+=======
+	Test testProgram = new Test();
+//	ArmRotation armRotation = new ArmRotation();
+>>>>>>> beta
 //	FollowMe followme = new FollowMe();
 //	WriteO writeO = new WriteO();
 	CheckColor checkColor = new CheckColor();
@@ -53,7 +58,7 @@ public class Marvin {
 		LCD.drawString("Menu:", 0, 0);
 		LCD.drawString("L = LineFollower", 0, 1);
 		LCD.drawString("R = BlindMode", 0, 2);
-		LCD.drawString("U = FollowMe", 0, 3);
+		LCD.drawString("U = Test", 0, 3);
 		LCD.drawString("D = TicTacToe", 0, 4);
 		LCD.drawString("ESC = EndProgram", 0, 5);
 
@@ -62,16 +67,17 @@ public class Marvin {
 
 		// select user choice
 		if (pressedButton == Button.ID_LEFT) {
-			 lineFollower.run();
+			//lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			// blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
-
+			testProgram.run();
 			// followMe.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 //			ticTacToe.run();
 
 			System.out.println("Boven");
+<<<<<<< HEAD
 // 			csvFile.check();
 			armRotation.rotateArm(-70);
 			Delay.msDelay(2000);
@@ -81,10 +87,21 @@ public class Marvin {
 //			writeO.run();
 			checkColor.run();
 			} else if (pressedButton == Button.ID_DOWN) {
+=======
+			// csvFile.check();
+			// armRotation.rotateArm(-55);
+			// Delay.msDelay(2000);
+			// armRotation.rotateArm(0);
+			// lights.brickLights(0, 150);
+			// followme.run();
+			// writeO.run();
+			// checkColor.run();
+		} else if (pressedButton == Button.ID_DOWN) {
+>>>>>>> beta
 			System.out.println("Onder");
-//			testProgram.run();
+			// testProgram.run();
 		} else if (pressedButton == Button.ID_ENTER) {
-			// enter restarts the menu			
+			// enter restarts the menu
 			waitForKeyPress();
 		} else if (pressedButton == Button.ID_ESCAPE) {
 			System.exit(0);

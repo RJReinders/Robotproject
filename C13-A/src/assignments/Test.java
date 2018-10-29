@@ -1,5 +1,6 @@
 package assignments;
 
+import models.*;
 
 
 public class Test extends Assignment {
@@ -15,7 +16,8 @@ public class Test extends Assignment {
 	
 	@Override
 	public void run() {
+		
+		RobotWithWheeledChassis testDing = new RobotWithWheeledChassis();
+		//testDing.run();		
 }
 }
-
-

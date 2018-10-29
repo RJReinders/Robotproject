@@ -157,9 +157,9 @@ public class LineFollower extends Assignment {
 		// local variables
 		ArrayList<Float> calibrationValues = new ArrayList<>();
 		boolean testingDone = false;
-		final int TEST_SAMPLES = 25;
+		final int TEST_SAMPLES = 30;
 
-		// start rotating (clockwise)
+		// start on black, take 
 		Motor.A.backward();
 		Motor.B.backward();
 		Motor.A.setSpeed(10);
