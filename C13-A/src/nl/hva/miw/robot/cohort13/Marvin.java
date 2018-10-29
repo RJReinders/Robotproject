@@ -16,7 +16,7 @@ public class Marvin {
 	// get the brick
 	Brick brick;
 
-	Assignment lineFollower = new LineFollower();
+	Assignment lineFollower = new LineFollowerRGB();
 //	Assignment blindMode = new BlindMode();
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
