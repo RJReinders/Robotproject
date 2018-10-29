@@ -10,6 +10,8 @@ import models.CsvFile;
 import models.Lights;
 import models.ArmRotation;
 import models.FollowMe;
+import models.WriteO;
+import models.CheckColor;
 
 import lejos.hardware.Brick;
 import lejos.hardware.Button;
@@ -26,13 +28,15 @@ public class Marvin {
 	Brick brick;
 	// TouchStop stopknop = new TouchStop();
 
-	Assignment lineFollower = new LineFollower();
-	Assignment blindMode = new BlindMode();
-	CsvFile csvFile = new CsvFile();
-	Lights lights = new Lights();
-	Test testProgram = new Test();
-	ArmRotation armRotation = new ArmRotation();
-	FollowMe followme = new FollowMe();
+//	Assignment lineFollower = new LineFollower();
+//	Assignment blindMode = new BlindMode();
+//	CsvFile csvFile = new CsvFile();
+//	Lights lights = new Lights();
+//	Test testProgram = new Test();
+//	ArmRotation armRotation = new ArmRotation();
+//	FollowMe followme = new FollowMe();
+//	WriteO writeO = new WriteO();
+	CheckColor checkColor = new CheckColor();
 
 	public Marvin() {
 		super();
@@ -76,13 +80,16 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_UP) {
 			System.out.println("Boven");
 // 			csvFile.check();
-//			armRotation.rotateArm(90);
+//			armRotation.rotateArm(-55);
+//			Delay.msDelay(2000);
 //			armRotation.rotateArm(0);
 //			lights.brickLights(0, 150);
-			followme.run();
-		} else if (pressedButton == Button.ID_DOWN) {
+//			followme.run();
+//			writeO.run();
+			checkColor.run();
+			} else if (pressedButton == Button.ID_DOWN) {
 			System.out.println("Onder");
-			testProgram.run();
+//			testProgram.run();
 		} else if (pressedButton == Button.ID_ENTER) {
 			System.out.println("Enter");
 		} else if (pressedButton == Button.ID_ESCAPE) {
