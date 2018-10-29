@@ -11,7 +11,7 @@ public class TouchStop extends Thread {
 	// attributes
 	
 	boolean stopThread;
-	EV3TouchSensor touchButton = new EV3TouchSensor(SensorPort.S2);
+	EV3TouchSensor touchButton = new EV3TouchSensor(SensorPort.S3);
 	SampleProvider sp = touchButton.getTouchMode();
 	float[] touchData = new float[sp.sampleSize()];
 	
@@ -27,7 +27,7 @@ public class TouchStop extends Thread {
 			Delay.msDelay(100);
 			sp.fetchSample(touchData, 0);
 			if(touchData[0] == 1) {
-				Sound.beep();
+				Sound.buzz();
 				endThread();
 				System.exit(0);
 			}
@@ -37,8 +37,5 @@ public class TouchStop extends Thread {
 	public void endThread() {
 		this.stopThread = true;
 	}
-
-	// getters and setters
-
 		
 }
