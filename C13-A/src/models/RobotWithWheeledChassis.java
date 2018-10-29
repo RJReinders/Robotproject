@@ -33,54 +33,10 @@ public class RobotWithWheeledChassis {
 	}
 	
 	public void run() {
-		rotateRight();
-		Delay.msDelay(500);
-		rotateLeft();
-		Delay.msDelay(500);
-		goToSquareNumber(1);
-		Delay.msDelay(500);
-		returnFromSquareNumber(1);
-		Delay.msDelay(500);
 		
-		goToSquareNumber(2);
 		Delay.msDelay(500);
-		returnFromSquareNumber(2);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(3);
-		Delay.msDelay(500);
-		returnFromSquareNumber(3);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(4);
-		Delay.msDelay(500);
-		returnFromSquareNumber(4);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(5);
-		Delay.msDelay(500);
-		returnFromSquareNumber(5);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(6);
-		Delay.msDelay(500);
-		returnFromSquareNumber(6);
-		Delay.msDelay(500);
-		
 		goToSquareNumber(7);
-		Delay.msDelay(500);
-		returnFromSquareNumber(7);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(8);
-		Delay.msDelay(500);
-		returnFromSquareNumber(8);
-		Delay.msDelay(500);
-		
-		goToSquareNumber(9);
-		Delay.msDelay(500);
-		returnFromSquareNumber(9);
-		Delay.msDelay(500);
+					
 		
 		Sound.buzz();
 	}
