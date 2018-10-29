@@ -174,68 +174,38 @@ public class TicTacToe extends Assignment {
 		for (int i = 0; i < inputBoard.length; i++) {
 			testBoard[i] = inputBoard[i];
 		}
-		// return winning move if there is one
-		for (int i = 0; i < testBoard.length; i++) {
-			if (testBoard[0] == 0 && ((testBoard[1] == 1 && testBoard[2] == 1)
-					|| (testBoard[3] == 1 && testBoard[6] == 1) || (testBoard[4] == 1 && testBoard[8] == 1)))
-				return 0;
-			else if (testBoard[1] == 0 && ((testBoard[0] == 1 && testBoard[2] == 1)
-					|| (testBoard[4] == 1 && testBoard[7] == 1)))
-				return 1;
-			else if (testBoard[2] == 0 && ((testBoard[0] == 1 && testBoard[1] == 1)
-					|| (testBoard[4] == 1 && testBoard[6] == 1) || (testBoard[5] == 1 && testBoard[8] == 1)))
-				return 2;
-			else if (testBoard[3] == 0 && ((testBoard[0] == 1 && testBoard[6] == 1)
-					|| (testBoard[4] == 1 && testBoard[5] == 1)))
-				return 3;
-			else if (testBoard[4] == 0 && ((testBoard[3] == 1 && testBoard[5] == 1)
-					|| (testBoard[1] == 1 && testBoard[7] == 1) || (testBoard[0] == 1 && testBoard[8] == 1)
-					|| (testBoard[2] == 1 && testBoard[6] == 1)))
-				return 4;
-			else if (testBoard[5] == 0 && ((testBoard[3] == 1 && testBoard[4] == 1)
-					|| (testBoard[2] == 1 && testBoard[8] == 1)))
-				return 5;
-			else if (testBoard[6] == 0 && ((testBoard[0] == 1 && testBoard[3] == 1)
-					|| (testBoard[2] == 1 && testBoard[4] == 1) || (testBoard[7] == 1 && testBoard[8] == 1)))
-				return 6;
-			else if (testBoard[7] == 0 && ((testBoard[1] == 1 && testBoard[4] == 1)
-					|| (testBoard[6] == 1 && testBoard[8] == 1)))
-				return 7;
-			else if (testBoard[8] == 0 && ((testBoard[0] == 1 && testBoard[4] == 1)
-					|| (testBoard[6] == 1 && testBoard[7] == 1) || (testBoard[2] == 1 && testBoard[5] == 1)))
-				return 8;
-		}
-
-		// return non-losing move if there is one
-		for (int i = 0; i < testBoard.length; i++) {
-			if (testBoard[0] == 0 && ((testBoard[1] == 2 && testBoard[2] == 2)
-					|| (testBoard[3] == 2 && testBoard[6] == 2) || (testBoard[4] == 2 && testBoard[8] == 2)))
-				return 0;
-			else if (testBoard[1] == 0 && ((testBoard[0] == 2 && testBoard[2] == 2)
-					|| (testBoard[4] == 2 && testBoard[7] == 2)))
-				return 1;
-			else if (testBoard[2] == 0 && ((testBoard[0] == 2 && testBoard[1] == 2)
-					|| (testBoard[4] == 2 && testBoard[6] == 2) || (testBoard[5] == 2 && testBoard[8] == 2)))
-				return 2;
-			else if (testBoard[3] == 0 && ((testBoard[0] == 2 && testBoard[6] == 2)
-					|| (testBoard[4] == 2 && testBoard[5] == 2)))
-				return 3;
-			else if (testBoard[4] == 0 && ((testBoard[3] == 2 && testBoard[5] == 2)
-					|| (testBoard[1] == 2 && testBoard[7] == 2) || (testBoard[0] == 2 && testBoard[8] == 2)
-					|| (testBoard[2] == 2 && testBoard[6] == 2)))
-				return 4;
-			else if (testBoard[5] == 0 && ((testBoard[3] == 2 && testBoard[4] == 2)
-					|| (testBoard[2] == 2 && testBoard[8] == 2)))
-				return 5;
-			else if (testBoard[6] == 0 && ((testBoard[0] == 2 && testBoard[3] == 2)
-					|| (testBoard[2] == 2 && testBoard[4] == 2) || (testBoard[7] == 1 && testBoard[8] == 1)))
-				return 6;
-			else if (testBoard[7] == 0 && ((testBoard[1] == 2 && testBoard[4] == 2)
-					|| (testBoard[6] == 2 && testBoard[8] == 2)))
-				return 7;
-			else if (testBoard[8] == 0 && ((testBoard[0] == 2 && testBoard[4] == 2)
-					|| (testBoard[6] == 2 && testBoard[7] == 2) || (testBoard[2] == 2 && testBoard[5] == 2)))
-				return 8;
+		// return winning move if there is one, then return non-losing move if there is one
+		for (int j = 1; j < 3; j++) {
+			for (int i = 0; i < testBoard.length; i++) {
+				if (testBoard[0] == 0 && ((testBoard[1] == j && testBoard[2] == j)
+						|| (testBoard[3] == j && testBoard[6] == j) || (testBoard[4] == j && testBoard[8] == j)))
+					return 0;
+				else if (testBoard[1] == 0
+						&& ((testBoard[0] == j && testBoard[2] == j) || (testBoard[4] == j && testBoard[7] == j)))
+					return 1;
+				else if (testBoard[2] == 0 && ((testBoard[0] == j && testBoard[1] == j)
+						|| (testBoard[4] == j && testBoard[6] == j) || (testBoard[5] == j && testBoard[8] == j)))
+					return 2;
+				else if (testBoard[3] == 0
+						&& ((testBoard[0] == j && testBoard[6] == j) || (testBoard[4] == j && testBoard[5] == j)))
+					return 3;
+				else if (testBoard[4] == 0 && ((testBoard[3] == j && testBoard[5] == j)
+						|| (testBoard[1] == j && testBoard[7] == j) || (testBoard[0] == j && testBoard[8] == j)
+						|| (testBoard[2] == j && testBoard[6] == j)))
+					return 4;
+				else if (testBoard[5] == 0
+						&& ((testBoard[3] == j && testBoard[4] == j) || (testBoard[2] == j && testBoard[8] == j)))
+					return 5;
+				else if (testBoard[6] == 0 && ((testBoard[0] == j && testBoard[3] == j)
+						|| (testBoard[2] == j && testBoard[4] == j) || (testBoard[7] == j && testBoard[8] == j)))
+					return 6;
+				else if (testBoard[7] == 0
+						&& ((testBoard[1] == j && testBoard[4] == j) || (testBoard[6] == j && testBoard[8] == j)))
+					return 7;
+				else if (testBoard[8] == 0 && ((testBoard[0] == j && testBoard[4] == j)
+						|| (testBoard[6] == j && testBoard[7] == j) || (testBoard[2] == j && testBoard[5] == j)))
+					return 8;
+			}
 		}
 		// return no move
 		return 0;
