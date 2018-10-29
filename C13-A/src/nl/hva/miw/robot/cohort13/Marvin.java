@@ -21,7 +21,7 @@ public class Marvin {
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
 //	Test testProgram = new Test();
-//	ArmRotation armRotation = new ArmRotation();
+	ArmRotation armRotation = new ArmRotation();
 //	FollowMe followme = new FollowMe();
 //	WriteO writeO = new WriteO();
 	CheckColor checkColor = new CheckColor();
@@ -69,13 +69,13 @@ public class Marvin {
 
 			// followMe.run();
 		} else if (pressedButton == Button.ID_DOWN) {
-			ticTacToe.run();
+//			ticTacToe.run();
 
 			System.out.println("Boven");
 // 			csvFile.check();
-//			armRotation.rotateArm(-55);
-//			Delay.msDelay(2000);
-//			armRotation.rotateArm(0);
+			armRotation.rotateArm(-70);
+			Delay.msDelay(2000);
+			armRotation.rotateArm(0);
 //			lights.brickLights(0, 150);
 //			followme.run();
 //			writeO.run();

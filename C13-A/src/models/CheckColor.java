@@ -27,7 +27,7 @@ public class CheckColor {
 	public void checkRgb() {
 
 		colorSensor.setCurrentMode("RGB");
-		colorSensor.setFloodlight(Color.BLUE);
+		colorSensor.setFloodlight(Color.WHITE);
 		int redGemeten;
 		int greenGemeten;
 		int blueGemeten;

@@ -4,6 +4,7 @@ import lejos.hardware.motor.Motor;
 
 public class ArmRotation {
 	
+	int motorSpeed = 100;
 	
 	public void rotateArm(int rotation) {
 		
@@ -16,6 +17,17 @@ public class ArmRotation {
 		Motor.C.setSpeed(10);
 		Motor.C.rotateTo(lowSpeedRotation);
 		Motor.C.stop();
+		
+		Motor.A.forward();
+		Motor.B.backward();
+		Motor.A.setSpeed(motorSpeed);
+		Motor.B.setSpeed(motorSpeed);
+		
+		if (rotation == 0) {
+			Motor.A.stop();
+			Motor.B.stop();
+		}
+		
 	}
 	
 
