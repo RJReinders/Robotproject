@@ -18,21 +18,21 @@ public class Marvin {
 	// get the brick
 	Brick brick;
 
-	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
-	Assignment lineFollower = new LineFollowerRGB(colorSensor);
+//	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
+//	Assignment lineFollower = new LineFollowerRGB(colorSensor);
 //	Assignment blindMode = new BlindMode();
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
 //	Test testProgram = new Test();
-	ArmRotation armRotation = new ArmRotation();
-
-	Test testProgram = new Test(colorSensor);
 //	ArmRotation armRotation = new ArmRotation();
 
-//	FollowMe followme = new FollowMe();
+//	Test testProgram = new Test(colorSensor);
+//	ArmRotation armRotation = new ArmRotation();
+
+	FollowMe followme = new FollowMe();
 //	WriteO writeO = new WriteO();
-	CheckColor checkColor = new CheckColor(colorSensor);
-	TicTacToe ticTacToe = new TicTacToe(colorSensor);
+//	CheckColor checkColor = new CheckColor(colorSensor);
+//	TicTacToe ticTacToe = new TicTacToe(colorSensor);
 
 	public Marvin() {
 		super();
@@ -57,7 +57,7 @@ public class Marvin {
 		// draw Menu on screen
 		Sound.twoBeeps();
 		LCD.clear();
-		LCD.drawString("Menu:", 0, 0);
+		LCD.drawString("Menus:", 0, 0);
 		LCD.drawString("L = LineFollower", 0, 1);
 		LCD.drawString("R = BlindMode", 0, 2);
 		LCD.drawString("U = Test", 0, 3);
@@ -69,23 +69,20 @@ public class Marvin {
 
 		// select user choice
 		if (pressedButton == Button.ID_LEFT) {
-			lineFollower.run();
+			//lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			// blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
-			testProgram.run();
+			//testProgram.run();
 			// followMe.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 //			ticTacToe.run();
-
-			System.out.println("Boven");
-
 			// csvFile.check();
 			// armRotation.rotateArm(-55);
 			// Delay.msDelay(2000);
 			// armRotation.rotateArm(0);
 			// lights.brickLights(0, 150);
-			// followme.run();
+			 followme.run();
 			// writeO.run();
 			// checkColor.run();
 		} else if (pressedButton == Button.ID_DOWN) {
