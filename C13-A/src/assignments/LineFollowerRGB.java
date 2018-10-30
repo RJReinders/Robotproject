@@ -11,6 +11,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
+import lejos.utility.Stopwatch;
 import models.*;
 
 public class LineFollowerRGB extends Assignment {
@@ -25,16 +26,21 @@ public class LineFollowerRGB extends Assignment {
 	private int whiteBorder;
 	private int currentLightIntensity;
 	private double speedFactor = 3.0;
+	private boolean start = false;
+	private boolean finished = false;
+	private int trackTime;
 
 	// attributes: color sensor
 	EV3ColorSensor colorSensor;
+	
+	// stopwatch
+	Stopwatch stopwatch = new Stopwatch();
 	
 	// attributes: roadmap
 	private static ArrayList<Float> roadMapA = new ArrayList<>();
 	private static ArrayList<Float> roadMapB = new ArrayList<>();
 
 	Lights lights = new Lights();
-	//FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
 
 	public LineFollowerRGB(EV3ColorSensor colorSensor) {
 		this.colorSensor = colorSensor;
@@ -47,29 +53,20 @@ public class LineFollowerRGB extends Assignment {
 		
 		calibrateColors();
 		rotateBackToBlackLine();
+		followLine();
 
-		while (true) {
-			followLine();
-			//findBlueLine.run();
+		String message = String.format("Tracktime = %d", trackTime);
+		LCD.drawString(message, 0, 7);
 
-		}
-		//System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+		Motor.A.stop();
+		Motor.B.stop();
 
-		//findBlueLine.endThread();
-
-		//Motor.A.stop();
-		//Motor.B.stop();
-
-		//Button.waitForAnyEvent();
-
+		waitForEnter();
 	}
 
 	public void followLine() {
-		// start second thread to find Blue Line
-		//findBlueLine.start();
-		
 		// loop until we have finished
-		while (true) {
+		while (!finished) {
 
 			// take color sample
 			float[] sample = new float[colorSensor.sampleSize()];
@@ -79,10 +76,17 @@ public class LineFollowerRGB extends Assignment {
 			float greenMeasured = sample[1];
 			float blueMeasured = sample[2];
 			
-			if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
+			// check if blue
+			if (start == false && ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255))) {
 				Sound.beep();
+				stopwatch.reset();
+				start = true;
 			}
-			
+			else if (start == true && ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) && stopwatch.elapsed()/1000 > 4.0) {
+				Sound.buzz();
+				trackTime = (int) (stopwatch.elapsed() / 1000);
+				finished = true;				
+			}
 			
 			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
 			LCD.clear();
@@ -247,6 +251,17 @@ public class LineFollowerRGB extends Assignment {
 			Motor.B.stop();
 		}
 
+	}
+	
+	public void waitForEnter() {
+		boolean doorgaan = false;		
+		int pressedButton;
+		while(!doorgaan) {
+			Delay.msDelay(100);
+			pressedButton = Button.waitForAnyEvent();		
+		if (pressedButton == Button.ID_ENTER)
+			doorgaan = true;
+		}
 	}
 
 	public static ArrayList<Float> getRoadMapA() {
