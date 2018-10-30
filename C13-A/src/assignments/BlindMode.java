@@ -10,7 +10,7 @@ public class BlindMode extends Assignment {
 
 	ArmRotation armRotation = new ArmRotation();
 	
-	private final int DEFAULT_SPEED = 75;
+	private final int DEFAULT_SPEED = 200;
 		
 	public BlindMode() {
 		
@@ -21,7 +21,7 @@ public class BlindMode extends Assignment {
 		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
 		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
 
-		armRotation.rotateArm(-40);
+		//armRotation.rotateArm(-40);
 		
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
@@ -53,10 +53,11 @@ public class BlindMode extends Assignment {
 			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
 			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
 			
-			Delay.msDelay(100);
+			Delay.msDelay(50);
 			
 		}
 		
+		//armRotation.rotateArm(0);
 		Motor.A.stop();
 		Motor.B.stop();
 		

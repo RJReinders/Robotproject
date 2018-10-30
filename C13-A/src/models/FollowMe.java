@@ -13,17 +13,22 @@ import models.CsvFile;
 
 import java.util.ArrayList;
 
-public class FollowMe {
+public class FollowMe extends Thread {
 
 	private static EV3IRSensor irSensor;
 	Lights lights = new Lights();
 	CsvFile csvFile = new CsvFile();
+	boolean stopThread = false;
+	int hoekMeting = 0;
 
 	public void run() {
 
 		irSensor = new EV3IRSensor(SensorPort.S1);
 		// follow();
-		followbeacon();
+		while (!stopThread) {
+			followbeacon();
+		}
+		irSensor.close();
 
 	}
 
@@ -74,7 +79,6 @@ public class FollowMe {
 	
 	private void followbeacon() {
 
-		int hoekMeting = 0;
 		int afstandMeting = 0;
 		// Motor.A.forward();
 		// Motor.B.forward();
@@ -84,7 +88,7 @@ public class FollowMe {
 	
 		SampleProvider meting = irSensor.getSeekMode();
 
-		while(Button.ESCAPE.isUp()) {
+		//while(Button.ESCAPE.isUp()) {
 
 
 			LCD.clear();
@@ -94,8 +98,8 @@ public class FollowMe {
 
 			hoekMeting = (int) sample[0];
 			afstandMeting = (int) sample[1];
-			LCD.drawInt(hoekMeting, 1, 4);
-			LCD.drawInt(afstandMeting, 1, 6);
+			LCD.drawInt(hoekMeting, 1, 6);
+			LCD.drawInt(afstandMeting, 1, 7);
 			Delay.msDelay(500);
 			
 			/*
@@ -115,13 +119,21 @@ public class FollowMe {
 				}
 			}
 			*/
-		}
+		//}
 		
 		
 		
 		// Motor.A.close();
 		// Motor.B.close();
-		irSensor.close();
 		
+		
+	}
+	
+	public void endThread() {
+		stopThread = true;
+	}
+	
+	public int getDeviation() {
+		return hoekMeting;
 	}
 }

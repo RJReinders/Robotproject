@@ -18,7 +18,7 @@ public class LineFollowerRGB extends Assignment {
 
 	// attributes: engine
 	private int finishLineColor = 0;
-	private final int DEFAULT_SPEED = 75;
+	private final int DEFAULT_SPEED = 200; // oud: 75
 	private final int REVERSE_SPEEDFACTOR = 3;
 	private int white = 1;
 	private int black = 100;
@@ -26,7 +26,7 @@ public class LineFollowerRGB extends Assignment {
 	private int blackBorder;
 	private int whiteBorder;
 	private int currentLightIntensity;
-	private double speedFactor = 3.0;
+	private double speedFactor = 5.0; // oud: 3.0
 	private boolean start = false;
 	private boolean finished = false;
 	private int trackTime;
@@ -59,7 +59,8 @@ public class LineFollowerRGB extends Assignment {
 		
 		LCD.clear();
 		String message = String.format("Tracktime = %d", trackTime);
-		LCD.drawString(message, 0, 7);
+		LCD.drawString(message, 0, 5);
+		LCD.drawInt(roadMapA.size(), 0, 7);
 
 		
 		
@@ -152,7 +153,7 @@ public class LineFollowerRGB extends Assignment {
 	
 				Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
 				Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
-				Delay.msDelay(100);
+				Delay.msDelay(10);
 			}
 		}
 	}
