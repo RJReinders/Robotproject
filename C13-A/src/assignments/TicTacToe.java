@@ -19,6 +19,7 @@ public class TicTacToe extends Assignment {
 	int nextPlayerIs;
 	int lastMoveMarvin;
 	Lights lights = new Lights();
+	FollowMe followMe = new FollowMe();
 
 	// sensors
 	EV3TouchSensor touchButton = new EV3TouchSensor(SensorPort.S3);
@@ -27,9 +28,6 @@ public class TicTacToe extends Assignment {
 	
 	EV3ColorSensor colorSensor;
 
-	// tijdelijke testsoftware
-	//InputTTTManual blokje = new InputTTTManual();
-	
 	// vervangende software
 	RobotWithWheeledChassis robot = new RobotWithWheeledChassis();
 
@@ -41,12 +39,8 @@ public class TicTacToe extends Assignment {
 	// main
 	@Override
 	public void run() {
+		followMe.start();
 		startNewGame(); // resets all variables
-
-		// TODO test code, kan later weg
-		//blokje.setGameBoard(gameBoard);
-		//blokje.drawCurrentBoard();
-		//blokje.waitForEnter();
 
 		while (!gameOver) {
 			if (nextPlayerIs == 1) {
@@ -54,19 +48,25 @@ public class TicTacToe extends Assignment {
 				if (!gameOver) {
 					makeNextMove(gameBoard);
 					drawNextMoveOnBoard(); // TODO Marvin laten tekenen toevoegen
+					Delay.msDelay(500);
+					robot.correctStartPosition(followMe.getDeviation()); 
 					checkIfGameOver(gameBoard);
 				}
 				nextPlayerIs = 2;
 			} else {
-				letPlayerMakeMove(); // TODO tijdelijke testcode, later verwijderen
-				 waitForTouchButtonPress(); // wait until user makes a move & presses the
+				letPlayerMakeMove();
+				waitForTouchButtonPress(); // wait until user makes a move & presses the
 				// button
-				 scanBoard(); // TODO bord scannen toevoegen, testcode verwijderen
+				scanBoard();
+				Delay.msDelay(500);
+				robot.correctStartPosition(followMe.getDeviation()); 
 				checkIfGameOver(gameBoard);
 				nextPlayerIs = 1;
 			}
 		}
-		displayOutcome(); // TODO passende uitkomst bedenken
+		displayOutcome();
+		followMe.endThread();
+		// TODO passende uitkomst bedenken
 	}
 
 	// methods
@@ -80,15 +80,10 @@ public class TicTacToe extends Assignment {
 	}
 
 	public void letPlayerMakeMove() {
-		// TODO testcode, later verwijderen!
-		//blokje.drawCurrentBoard();
-		//blokje.inputUserMove();
 		nextPlayerIs = 1;
 	}
 
 	private void scanBoard() {
-		// TODO vervangen met algoritme bord scannen en array updaten
-		// this.gameBoard = blokje.getGameBoard();
 		float redMeasured;
 		float greenMeasured;
 		float blueMeasured;
@@ -395,8 +390,6 @@ public class TicTacToe extends Assignment {
 	}
 
 	private void drawNextMoveOnBoard() {
-		// tijdelijke testcode, later vervangen voor Algoritme waar Marvin op het bord
-		// tekent
 		robot.goToSquareNumber(lastMoveMarvin);
 		// draw action toevoegen
 		Delay.msDelay(1000);
@@ -405,10 +398,10 @@ public class TicTacToe extends Assignment {
 
 	private void waitForTouchButtonPress() {
 		// draw LCD prompt
-		LCD.clear();
-		LCD.drawString("Druk op de rode", 0, 4);
-		LCD.drawString("knop als je een", 0, 5);
-		LCD.drawString("zet gedaan hebt.", 0, 6);
+		//LCD.clear();
+		//LCD.drawString("Druk op de rode", 0, 4);
+		//LCD.drawString("knop als je een", 0, 5);
+		//LCD.drawString("zet gedaan hebt.", 0, 6);
 		// wait for button press
 		boolean buttonPressed = false;
 		while (!buttonPressed) {
@@ -432,11 +425,5 @@ public class TicTacToe extends Assignment {
 		} else {
 			LCD.drawString("Marvin verliest", 0, 4);
 		}
-		
-		// tijdelijke code
-		//blokje.displayWinner(winner);
-		//blokje.waitForEnter();
-
 	}
-
 }

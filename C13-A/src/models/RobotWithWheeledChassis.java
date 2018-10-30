@@ -165,4 +165,11 @@ public class RobotWithWheeledChassis {
 			break;
 		}
 	}
+	
+	public void correctStartPosition(int deviation) {
+		pilot.rotate(45);
+		pilot.travel(14 * deviation);
+		pilot.rotate(-45);
+		pilot.travel(-10 * deviation);
+	}
 }
