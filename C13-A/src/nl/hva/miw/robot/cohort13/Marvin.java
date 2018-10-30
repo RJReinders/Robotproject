@@ -20,14 +20,14 @@ public class Marvin {
 
 	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
 	Assignment lineFollower = new LineFollowerRGB(colorSensor);
-//	Assignment blindMode = new BlindMode();
+	Assignment blindMode = new BlindMode();
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
-	Test testProgram = new Test(colorSensor);
+//	Test testProgram = new Test(colorSensor);
 //	ArmRotation armRotation = new ArmRotation();
-//	FollowMe followme = new FollowMe();
+	FollowMe followMe = new FollowMe();
 //	WriteO writeO = new WriteO();
-	CheckColor checkColor = new CheckColor(colorSensor);
+//	CheckColor checkColor = new CheckColor(colorSensor);
 	TicTacToe ticTacToe = new TicTacToe(colorSensor);
 
 	public Marvin() {
@@ -56,7 +56,7 @@ public class Marvin {
 		LCD.drawString("Menu:", 0, 0);
 		LCD.drawString("L = LineFollower", 0, 1);
 		LCD.drawString("R = BlindMode", 0, 2);
-		LCD.drawString("U = Test", 0, 3);
+		LCD.drawString("U = followMe", 0, 3);
 		LCD.drawString("D = TicTacToe", 0, 4);
 		LCD.drawString("ESC = EndProgram", 0, 5);
 
@@ -67,10 +67,10 @@ public class Marvin {
 		if (pressedButton == Button.ID_LEFT) {
 			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
-			// blindMode.run();
+			blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {
-			testProgram.run();
-			// followMe.run();
+			//testProgram.run();
+			followMe.run();
 		} else if (pressedButton == Button.ID_DOWN) {
 			ticTacToe.run();
 

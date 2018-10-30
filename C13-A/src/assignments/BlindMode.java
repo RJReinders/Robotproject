@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 import lejos.hardware.motor.Motor;
 import lejos.utility.Delay;
+import models.ArmRotation;
 
 public class BlindMode extends Assignment {
 
-	private final int DEFAULT_SPEED = 50;
-	ArrayList<Float> roadMapA = LineFollower.getRoadMapA();
-	ArrayList<Float> roadMapB = LineFollower.getRoadMapB();
+	ArmRotation armRotation = new ArmRotation();
+	
+	private final int DEFAULT_SPEED = 75;
 		
 	public BlindMode() {
 		
@@ -17,7 +18,11 @@ public class BlindMode extends Assignment {
 	
 	@Override
 	public void run() {
+		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
+		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
 
+		armRotation.rotateArm(-40);
+		
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
@@ -25,28 +30,28 @@ public class BlindMode extends Assignment {
 			Motor.A.forward();
 			Motor.B.forward();
 
-			float motorSpeedA = roadMapA.get(i);
-			float motorSpeedB = roadMapB.get(i);
+			int motorSpeedA = roadMapA.get(i);
+			int motorSpeedB = roadMapB.get(i);
 
 			System.out.println(roadMapA.get(i));
 			System.out.println(roadMapB.get(i));
 			
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * 4;
+				motorSpeedA = -motorSpeedA;
 			} else {
 				Motor.A.forward();
 			}
 
 			if (motorSpeedB < 0) {
 				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * 4;
+				motorSpeedB = -motorSpeedB;
 			} else {
 				Motor.B.forward();
 			}
 		
-			Motor.A.setSpeed(motorSpeedA);
-			Motor.B.setSpeed(motorSpeedB);
+			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
 			
 			Delay.msDelay(100);
 			

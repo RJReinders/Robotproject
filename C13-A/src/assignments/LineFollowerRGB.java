@@ -17,6 +17,7 @@ import models.*;
 public class LineFollowerRGB extends Assignment {
 
 	// attributes: engine
+	private int finishLineColor = 0;
 	private final int DEFAULT_SPEED = 75;
 	private final int REVERSE_SPEEDFACTOR = 3;
 	private int white = 1;
@@ -35,10 +36,11 @@ public class LineFollowerRGB extends Assignment {
 	
 	// stopwatch
 	Stopwatch stopwatch = new Stopwatch();
+	CsvFile csvFile = new CsvFile();
 	
 	// attributes: roadmap
-	private static ArrayList<Float> roadMapA = new ArrayList<>();
-	private static ArrayList<Float> roadMapB = new ArrayList<>();
+	private static ArrayList<Integer> roadMapA = new ArrayList<>();
+	private static ArrayList<Integer> roadMapB = new ArrayList<>();
 
 	Lights lights = new Lights();
 
@@ -54,12 +56,17 @@ public class LineFollowerRGB extends Assignment {
 		calibrateColors();
 		rotateBackToBlackLine();
 		followLine();
-
+		
+		LCD.clear();
 		String message = String.format("Tracktime = %d", trackTime);
 		LCD.drawString(message, 0, 7);
 
-		Motor.A.stop();
-		Motor.B.stop();
+		
+		
+		colorSensor.close();
+		
+		csvFile.createCsvFileMotor(roadMapA, "A");
+		csvFile.createCsvFileMotor(roadMapB, "B");
 
 		waitForEnter();
 	}
@@ -85,136 +92,187 @@ public class LineFollowerRGB extends Assignment {
 			else if (start == true && ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) && stopwatch.elapsed()/1000 > 4.0) {
 				Sound.buzz();
 				trackTime = (int) (stopwatch.elapsed() / 1000);
-				finished = true;				
+				finished = true;
+				Motor.A.stop();
+				Motor.B.stop();
 			}
 			
-			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
-			LCD.clear();
-			LCD.drawString("    ", 0, 5);
-			LCD.drawInt(currentLightIntensity, 0, 5);
-			
-
-			// NOTE eerst formule, dan FW/BW, dan default speed erbij!
-			// NOTE acceleratie voor of na het flippen van de motor?
-			float motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder));
-			float motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
-
-			// if (almost) straight line, accelerate
-			if (motorSpeedA / motorSpeedB > 0.55 && motorSpeedA / motorSpeedB < 1.45) {
-				acceleration += 15;
-				if (acceleration > 450)
-					acceleration = 450;
-				lights.brickLights(1, 150);
-			} else {
-				acceleration -= 45;
-				if (acceleration < 15)
-					acceleration = 15;
-				lights.brickLights(2, 150);
+			if (!finished) {
+				currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
+				LCD.clear();
+				LCD.drawString("    ", 0, 5);
+				LCD.drawInt(currentLightIntensity, 0, 5);
+				
+	
+				// NOTE eerst formule, dan FW/BW, dan default speed erbij!
+				// NOTE acceleratie voor of na het flippen van de motor?
+				int motorSpeedA = (int) (speedFactor * (currentLightIntensity - blackBorder));
+				int motorSpeedB = (int) (speedFactor * (whiteBorder - currentLightIntensity));
+	
+				// if (almost) straight line, accelerate
+				if (motorSpeedA / (motorSpeedB + 1) > 0.55 && motorSpeedA / (motorSpeedB + 1) < 1.45) {
+					acceleration += 15;
+					if (acceleration > 450)
+						acceleration = 450;
+					lights.brickLights(1, 150);
+				} else {
+					acceleration -= 45;
+					if (acceleration < 15)
+						acceleration = 15;
+					lights.brickLights(2, 150);
+				}
+	
+				if (motorSpeedA < 0) {
+					Motor.A.backward();
+					motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
+					if (start)
+						roadMapA.add(-motorSpeedA);
+				} else {
+					Motor.A.forward();
+					motorSpeedA += acceleration;
+					if (start)
+						roadMapA.add(motorSpeedA);
+				}
+	
+				if (motorSpeedB < 0) {
+					Motor.B.backward();
+					motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
+					if (start)
+						roadMapB.add(-motorSpeedB);
+				} else {
+					Motor.B.forward();
+					motorSpeedB += acceleration;
+					if (start)
+						roadMapB.add(motorSpeedB);
+				}
+	
+				LCD.drawInt((int) motorSpeedA, 0, 7);
+				LCD.drawInt((int) motorSpeedB, 12, 7);
+				LCD.drawInt((int) acceleration, 7, 7);
+	
+				Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+				Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
+				Delay.msDelay(100);
 			}
-
-			if (motorSpeedA < 0) {
-				Motor.A.backward();
-				motorSpeedA = -motorSpeedA * REVERSE_SPEEDFACTOR;
-			} else {
-				Motor.A.forward();
-				motorSpeedA += acceleration;
-			}
-
-			if (motorSpeedB < 0) {
-				Motor.B.backward();
-				motorSpeedB = -motorSpeedB * REVERSE_SPEEDFACTOR;
-			} else {
-				Motor.B.forward();
-				motorSpeedB += acceleration;
-			}
-
-			LCD.drawInt((int) motorSpeedA, 0, 7);
-			LCD.drawInt((int) motorSpeedB, 12, 7);
-			LCD.drawInt((int) acceleration, 7, 7);
-
-			// N.B. roadMap onthoudt niet forward of backward
-			roadMapA.add(motorSpeedA);
-			roadMapB.add(motorSpeedB);
-
-			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
-			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
-			Delay.msDelay(50);
 		}
 	}
 
 	private void rotateBackToBlackLine() {
 		// rotate back
-		Motor.A.forward();
-		Motor.B.forward();
-		Motor.A.setSpeed(10);
-		Motor.B.setSpeed(100);
+		Motor.A.backward();
+		Motor.B.backward();
+		Motor.A.setSpeed(80);
+		Motor.B.setSpeed(80);
 
 		// find the grey line
 		boolean greyLineFound = false;
 		while (!greyLineFound) {
-			
+
 			float[] sample = new float[colorSensor.sampleSize()];
 			colorSensor.fetchSample(sample, 0);
-			
 			float redMeasured = sample[0];
 			float greenMeasured = sample[1];
-			float blueMeasured = sample[2];
-			
-			
+			float blueMeasured = sample[2];						
 			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
-			
+
 			if (currentLightIntensity < blackBorder) {
-				greyLineFound = true;
-				Sound.buzz();
+				greyLineFound = true;				
 				LCD.drawString("Grijze lijn gevonden!", 0, 4);
 			}
 		}
-
-		// start driving forward
-		Delay.msDelay(1000);
-		Motor.A.setSpeed(DEFAULT_SPEED);
-		Motor.B.setSpeed(DEFAULT_SPEED);
-		Motor.A.forward();
-		Motor.B.forward();
-
+		Motor.A.stop();
+		Motor.B.stop();		
 	}
 
 	public void calibrateColors() {
-
 		// local variables
 		ArrayList<Float> calibrationValues = new ArrayList<>();
-		boolean testingDone = false;
-		final int TEST_SAMPLES = 25;
+		final int TEST_SAMPLES = 15;
+		colorSensor.setCurrentMode("RGB");
 
-		// start rotating (clockwise)
+		// stand still
+		Motor.A.stop();
+		Motor.B.stop();
+
+		// make test reading on finish line
+		finishLineColor = 0;
+		lights.brickLights(1, 150);
+		while (finishLineColor == 0) {
+			float[] sample = new float[colorSensor.sampleSize()];
+			colorSensor.fetchSample(sample, 0);
+			// determine color of finish line
+			if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
+				finishLineColor = 1; // blauw
+			} else if ((int) (sample[0] * 255) - 30 > (int) (sample[2] * 255) && (sample[1] * 255 < 50)) {
+				finishLineColor = 2; // rood
+			} else {
+				finishLineColor = 0;
+				lights.brickLights(2, 150);
+			}
+			Delay.msDelay(200);
+			lights.brickLights(0, 150);
+		}
+
+		// drive backwards, make black readings
 		Motor.A.backward();
 		Motor.B.backward();
-		Motor.A.setSpeed(10);
-		Motor.B.setSpeed(100);
-		
+		Motor.A.setSpeed(150);
+		Motor.B.setSpeed(150);
+
+		boolean testingDone = false;
 		// make test readings
 		while (!testingDone) {
 			// add test sample then wait
 			float[] sample = new float[colorSensor.sampleSize()];
 			colorSensor.fetchSample(sample, 0);
-			
 			float redMeasured = sample[0];
 			float greenMeasured = sample[1];
 			float blueMeasured = sample[2];
-			
-			
-			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
-			
-			calibrationValues.add((redMeasured + greenMeasured + blueMeasured)/3 * 100);
+			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured) / 3 * 100);
+			calibrationValues.add((redMeasured + greenMeasured + blueMeasured) / 3 * 100);
 			Delay.msDelay(200);
-
 			// continue until number of samples is collected
 			if (calibrationValues.size() >= TEST_SAMPLES) {
 				testingDone = true;
-				Sound.beep();
+				Motor.A.stop();
+				Motor.B.stop();
 			}
 		}
 
+		// rotate inward (leftward)
+		Motor.A.setSpeed(150);
+		Motor.B.setSpeed(150);
+		Motor.A.backward();
+		Motor.B.forward();
+		Delay.msDelay(750);
+		Motor.A.stop();
+		Motor.B.stop();
+
+		// drive forwards, make white readings
+		Motor.A.setSpeed(125);
+		Motor.B.setSpeed(125);
+		Motor.A.forward();
+		Motor.B.forward();
+
+		testingDone = false;
+		// make test readings
+		while (!testingDone) {
+			// add test sample then wait
+			float[] sample = new float[colorSensor.sampleSize()];
+			colorSensor.fetchSample(sample, 0);
+			float redMeasured = sample[0];
+			float greenMeasured = sample[1];
+			float blueMeasured = sample[2];
+			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured) / 3 * 100);
+			calibrationValues.add((redMeasured + greenMeasured + blueMeasured) / 3 * 100);
+			Delay.msDelay(100);
+			// continue until number of samples is collected
+			if (calibrationValues.size() * 0.5 >= TEST_SAMPLES) {
+				testingDone = true;
+				Motor.A.stop();
+				Motor.B.stop();
+			}
+		}
 		// set the black(est) and white(st) values
 		for (int i = 0; i < calibrationValues.size(); i++) {
 			if (calibrationValues.get(i) < black)
@@ -226,32 +284,9 @@ public class LineFollowerRGB extends Assignment {
 		final int DEVIATION = ((white - black) / 4);
 		blackBorder = black + DEVIATION;
 		whiteBorder = white - DEVIATION;
-
-		// draw results on screen (TEST - KAN LATER WEG)
-		LCD.clear();
-		LCD.drawString("Wit:", 0, 0);
-		LCD.drawInt(white, 4, 0);
-		LCD.drawString("Zwart:", 0, 1);
-		LCD.drawInt(black, 6, 1);
-		LCD.drawString("Baan van xx tot xx", 0, 2);
-		LCD.drawInt((black + DEVIATION), 9, 2);
-		LCD.drawInt(white, 16, 2);
-		LCD.drawString("Deviation:", 0, 3);
-		LCD.drawInt(DEVIATION, 10, 3);
-		Delay.msDelay(2000);
-
-		// check if two color have been detected, recalibrate if necessary
-		if (white / black > 0.80 && white / black < 1.20) {
-			LCD.drawString("Geen goede meting gedaan!", 0, 4);
-			Sound.beep();
-			Delay.msDelay(1000);
-			LCD.clear();
-			calibrateColors();
-			Motor.A.stop();
-			Motor.B.stop();
-		}
-
 	}
+
+
 	
 	public void waitForEnter() {
 		boolean doorgaan = false;		
@@ -264,11 +299,11 @@ public class LineFollowerRGB extends Assignment {
 		}
 	}
 
-	public static ArrayList<Float> getRoadMapA() {
+	public static ArrayList<Integer> getRoadMapA() {
 		return roadMapA;
 	}
 
-	public static ArrayList<Float> getRoadMapB() {
+	public static ArrayList<Integer> getRoadMapB() {
 		return roadMapB;
 	}
 }
