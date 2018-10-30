@@ -14,12 +14,15 @@ import models.Lights;
 
 public class CheckColor {
 
-	private static EV3ColorSensor colorSensor;
+	private EV3ColorSensor colorSensor;
 	private static Lights lights = new Lights();
 
+	public CheckColor(EV3ColorSensor colorSensor) {
+		this.colorSensor = colorSensor;
+	}
+	
 	public void run() {
 		LCD.clear();
-		colorSensor = new EV3ColorSensor(SensorPort.S2);
 		colorSensor.setFloodlight(false);
 		checkRgb();
 		// checkFloodLight();

@@ -25,7 +25,7 @@ public class TicTacToe extends Assignment {
 	SampleProvider spTouch = touchButton.getTouchMode();
 	float[] touchData = new float[spTouch.sampleSize()];
 	
-	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
+	EV3ColorSensor colorSensor;
 
 	// tijdelijke testsoftware
 	//InputTTTManual blokje = new InputTTTManual();
@@ -34,7 +34,8 @@ public class TicTacToe extends Assignment {
 	RobotWithWheeledChassis robot = new RobotWithWheeledChassis();
 
 	// constructors
-	public TicTacToe() {
+	public TicTacToe(EV3ColorSensor colorSensor) {
+		this.colorSensor = colorSensor;
 	}
 
 	// main

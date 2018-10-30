@@ -10,22 +10,25 @@ import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.LCD;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.utility.Delay;
 
 public class Marvin {
 	// get the brick
 	Brick brick;
 
-//	Assignment lineFollower = new LineFollowerRGB();
+	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
+	Assignment lineFollower = new LineFollowerRGB(colorSensor);
 //	Assignment blindMode = new BlindMode();
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
-	Test testProgram = new Test();
+	Test testProgram = new Test(colorSensor);
 //	ArmRotation armRotation = new ArmRotation();
 //	FollowMe followme = new FollowMe();
 //	WriteO writeO = new WriteO();
-	CheckColor checkColor = new CheckColor();
-	TicTacToe ticTacToe = new TicTacToe();
+	CheckColor checkColor = new CheckColor(colorSensor);
+	TicTacToe ticTacToe = new TicTacToe(colorSensor);
 
 	public Marvin() {
 		super();
@@ -62,7 +65,7 @@ public class Marvin {
 
 		// select user choice
 		if (pressedButton == Button.ID_LEFT) {
-			//lineFollower.run();
+			lineFollower.run();
 		} else if (pressedButton == Button.ID_RIGHT) {
 			// blindMode.run();
 		} else if (pressedButton == Button.ID_UP) {

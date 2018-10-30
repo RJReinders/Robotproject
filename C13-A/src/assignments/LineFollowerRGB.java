@@ -1,4 +1,4 @@
-/*package assignments;
+package assignments;
 
 // imports
 import java.util.ArrayList;
@@ -8,11 +8,12 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import models.*;
 
-public class LineFollower extends Assignment {
+public class LineFollowerRGB extends Assignment {
 
 	// attributes: engine
 	private final int DEFAULT_SPEED = 75;
@@ -26,55 +27,68 @@ public class LineFollower extends Assignment {
 	private double speedFactor = 3.0;
 
 	// attributes: color sensor
-	private EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
-	private SampleProvider sp = colorSensor.getRedMode();
-	private float[] lightIntensity = new float[sp.sampleSize()];
-
+	EV3ColorSensor colorSensor;
+	
 	// attributes: roadmap
 	private static ArrayList<Float> roadMapA = new ArrayList<>();
 	private static ArrayList<Float> roadMapB = new ArrayList<>();
 
 	Lights lights = new Lights();
-	FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
+	//FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
 
-	public LineFollower() {
-
+	public LineFollowerRGB(EV3ColorSensor colorSensor) {
+		this.colorSensor = colorSensor;
 	}
 
 	@Override
 	public void run() {
+		colorSensor.setCurrentMode("RGB");
+		colorSensor.setFloodlight(Color.WHITE);
+		
 		calibrateColors();
 		rotateBackToBlackLine();
 
-		while (!findBlueLine.getFinished()) {
+		while (true) {
 			followLine();
-			findBlueLine.run();
+			//findBlueLine.run();
 
 		}
-		System.out.println("Tracktime = " + findBlueLine.getTrackTime());
+		//System.out.println("Tracktime = " + findBlueLine.getTrackTime());
 
-		findBlueLine.endThread();
+		//findBlueLine.endThread();
 
-		Motor.A.stop();
-		Motor.B.stop();
+		//Motor.A.stop();
+		//Motor.B.stop();
 
-		Button.waitForAnyEvent();
+		//Button.waitForAnyEvent();
 
 	}
 
 	public void followLine() {
 		// start second thread to find Blue Line
-		findBlueLine.start();
+		//findBlueLine.start();
 		
 		// loop until we have finished
-		while (!findBlueLine.getFinished()) {
+		while (true) {
 
 			// take color sample
-			sp.fetchSample(lightIntensity, 0);
-			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			float[] sample = new float[colorSensor.sampleSize()];
+			colorSensor.fetchSample(sample, 0);
+			
+			float redMeasured = sample[0];
+			float greenMeasured = sample[1];
+			float blueMeasured = sample[2];
+			
+			if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
+				Sound.beep();
+			}
+			
+			
+			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
 			LCD.clear();
 			LCD.drawString("    ", 0, 5);
 			LCD.drawInt(currentLightIntensity, 0, 5);
+			
 
 			// NOTE eerst formule, dan FW/BW, dan default speed erbij!
 			// NOTE acceleratie voor of na het flippen van de motor?
@@ -134,8 +148,17 @@ public class LineFollower extends Assignment {
 		// find the grey line
 		boolean greyLineFound = false;
 		while (!greyLineFound) {
-			sp.fetchSample(lightIntensity, 0);
-			currentLightIntensity = (int) (lightIntensity[0] * 100);
+			
+			float[] sample = new float[colorSensor.sampleSize()];
+			colorSensor.fetchSample(sample, 0);
+			
+			float redMeasured = sample[0];
+			float greenMeasured = sample[1];
+			float blueMeasured = sample[2];
+			
+			
+			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
+			
 			if (currentLightIntensity < blackBorder) {
 				greyLineFound = true;
 				Sound.buzz();
@@ -157,9 +180,9 @@ public class LineFollower extends Assignment {
 		// local variables
 		ArrayList<Float> calibrationValues = new ArrayList<>();
 		boolean testingDone = false;
-		final int TEST_SAMPLES = 30;
+		final int TEST_SAMPLES = 25;
 
-		// start on black, take 
+		// start rotating (clockwise)
 		Motor.A.backward();
 		Motor.B.backward();
 		Motor.A.setSpeed(10);
@@ -168,9 +191,17 @@ public class LineFollower extends Assignment {
 		// make test readings
 		while (!testingDone) {
 			// add test sample then wait
-			colorSensor.setCurrentMode("Red");
-			sp.fetchSample(lightIntensity, 0);
-			calibrationValues.add(lightIntensity[0] * 100);
+			float[] sample = new float[colorSensor.sampleSize()];
+			colorSensor.fetchSample(sample, 0);
+			
+			float redMeasured = sample[0];
+			float greenMeasured = sample[1];
+			float blueMeasured = sample[2];
+			
+			
+			currentLightIntensity = (int) ((redMeasured + greenMeasured + blueMeasured)/3 * 100);
+			
+			calibrationValues.add((redMeasured + greenMeasured + blueMeasured)/3 * 100);
 			Delay.msDelay(200);
 
 			// continue until number of samples is collected
@@ -226,4 +257,3 @@ public class LineFollower extends Assignment {
 		return roadMapB;
 	}
 }
-*/
