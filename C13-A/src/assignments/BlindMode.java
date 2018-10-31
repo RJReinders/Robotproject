@@ -18,10 +18,12 @@ public class BlindMode extends Assignment {
 	
 	@Override
 	public void run() {
+		
+		
 		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
 		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
 
-		//armRotation.rotateArm(-40);
+		armRotation.rotateArm(-30);
 		
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
@@ -57,7 +59,7 @@ public class BlindMode extends Assignment {
 			
 		}
 		
-		//armRotation.rotateArm(0);
+		armRotation.rotateArm(0);
 		Motor.A.stop();
 		Motor.B.stop();
 		

@@ -15,26 +15,29 @@ import java.util.ArrayList;
 
 public class FollowMe extends Thread {
 
-	private static EV3IRSensor irSensor;
+	private static EV3IRSensor iRSensor;
 	Lights lights = new Lights();
 	CsvFile csvFile = new CsvFile();
 	boolean stopThread = false;
 	int hoekMeting = 0;
 
+	public FollowMe(Sensors sensors) {
+		this.iRSensor = sensors.getIRSensor();
+	}
+	
 	public void run() {
 
-		irSensor = new EV3IRSensor(SensorPort.S1);
 		// follow();
 		while (!stopThread) {
 			followbeacon();
 		}
-		irSensor.close();
+		iRSensor.close();
 
 	}
 
 	private void follow() {
 
-		SampleProvider afstand = irSensor.getDistanceMode();
+		SampleProvider afstand = iRSensor.getDistanceMode();
 		int distanceValue = 0;
 		boolean stopped = false;
 		float[] sample = new float[afstand.sampleSize()];
@@ -85,7 +88,7 @@ public class FollowMe extends Thread {
 
 		int afstandMeting = 0;
 
-		SampleProvider meting = irSensor.getSeekMode();
+		SampleProvider meting = iRSensor.getSeekMode();
 
 		float[] sample = new float[meting.sampleSize()];
 
