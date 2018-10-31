@@ -76,10 +76,7 @@ public class FollowMe extends Thread {
 				// Motor.B.setSpeed(motorSpeed * 3);
 				lights.brickLights(5, 50);
 
-			} else {
-				// Motor.A.setSpeed(motorSpeed);
-				// Motor.B.setSpeed(motorSpeed);
-				lights.brickLights(1, 50);
+
 			}
 		}
 	}
@@ -97,6 +94,8 @@ public class FollowMe extends Thread {
 		hoekMeting = (int) sample[0];
 		afstandMeting = (int) sample[1];
 
+		LCD.drawString("     ", 1, 6);
+		LCD.drawString("     ", 1, 7);
 		LCD.drawInt(hoekMeting, 1, 6);
 		LCD.drawInt(afstandMeting, 1, 7);
 		Delay.msDelay(500);

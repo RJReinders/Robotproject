@@ -10,6 +10,7 @@ import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.LCD;
+import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.utility.Delay;
@@ -25,7 +26,7 @@ public class Marvin {
 //	CsvFile csvFile = new CsvFile();
 //	Lights lights = new Lights();
 //	Test testProgram = new Test(colorSensor);
-//	ArmRotation armRotation = new ArmRotation();
+	ArmRotation armRotation = new ArmRotation();
 	FollowMe followMe = new FollowMe();
 //	WriteO writeO = new WriteO();
 //	CheckColor checkColor = new CheckColor(colorSensor);
@@ -72,11 +73,25 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_UP) {
 			//testProgram.run();
 			// followMe.run();
+			
+			armRotation.rotateArm(-65);
+			Motor.A.setSpeed(50);
+			Motor.B.setSpeed(50);
+			Motor.A.forward();
+			Motor.B.forward();
+			Delay.msDelay(1000);
+			Motor.A.stop();
+			Motor.B.stop();
+			Motor.A.backward();
+			Delay.msDelay(2000);
+			Motor.A.stop();
+			armRotation.rotateArm(0);
+			
 
 		} else if (pressedButton == Button.ID_DOWN) {
-//			ticTacToe.run();
+			ticTacToe.run();
 			// csvFile.check();
-			// armRotation.rotateArm(-55);
+
 			// Delay.msDelay(2000);
 			// armRotation.rotateArm(0);
 			// lights.brickLights(0, 150);
