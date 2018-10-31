@@ -12,7 +12,7 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import models.*;
 
-public class LineFollower extends Assignment {
+public class LineFollowerRed extends Assignment {
 
 	// attributes: engine
 	private final int DEFAULT_SPEED = 75;
@@ -37,7 +37,7 @@ public class LineFollower extends Assignment {
 	Lights lights = new Lights();
 	FindBlueLine findBlueLine = new FindBlueLine(colorSensor);
 
-	public LineFollower() {
+	public LineFollowerRed() {
 
 	}
 

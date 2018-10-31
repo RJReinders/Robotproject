@@ -19,26 +19,34 @@ public class TicTacToe extends Assignment {
 	int nextPlayerIs;
 	int lastMoveMarvin;
 	Lights lights = new Lights();
-	FollowMe followMe = new FollowMe();
+	FollowMe followMe;
+	Sensors sensors;
+	ArmRotation armRotation;
 
 	// sensors
-	EV3TouchSensor touchButton = new EV3TouchSensor(SensorPort.S3);
-	SampleProvider spTouch = touchButton.getTouchMode();
-	float[] touchData = new float[spTouch.sampleSize()];
-	
 	EV3ColorSensor colorSensor;
+
+	EV3TouchSensor touchSensor;
+	SampleProvider spTouch;
+	float[] touchData;
+	
 
 	// vervangende software
 	RobotWithWheeledChassis robot = new RobotWithWheeledChassis();
 
 	// constructors
-	public TicTacToe(EV3ColorSensor colorSensor) {
-		this.colorSensor = colorSensor;
+	public TicTacToe(Sensors sensors) {
+		this.colorSensor = sensors.getColorSensor();
+		this.touchSensor = sensors.getTouchSensor();
+		followMe = new FollowMe(sensors);
+		armRotation = new ArmRotation();
 	}
 
 	// main
 	@Override
 	public void run() {
+		spTouch = touchSensor.getTouchMode();
+		touchData = new float[spTouch.sampleSize()];
 		followMe.start();
 		startNewGame(); // resets all variables
 
@@ -49,7 +57,9 @@ public class TicTacToe extends Assignment {
 					makeNextMove(gameBoard);
 					drawNextMoveOnBoard(); // TODO Marvin laten tekenen toevoegen
 					Delay.msDelay(500);
-					robot.correctStartPosition(followMe.getDeviation()); 
+					while (followMe.getDeviation() < -1 || followMe.getDeviation() > 1) {
+						robot.correctStartPosition(followMe.getDeviation()); 
+					}
 					checkIfGameOver(gameBoard);
 				}
 				nextPlayerIs = 2;
@@ -392,7 +402,10 @@ public class TicTacToe extends Assignment {
 	private void drawNextMoveOnBoard() {
 		robot.goToSquareNumber(lastMoveMarvin);
 		// draw action toevoegen
+		Sound.beep();
+		armRotation.rotateArm(-55);
 		Delay.msDelay(1000);
+		armRotation.rotateArm(0);
 		robot.returnFromSquareNumber(lastMoveMarvin);
 	}
 
@@ -425,5 +438,6 @@ public class TicTacToe extends Assignment {
 		} else {
 			LCD.drawString("Marvin verliest", 0, 4);
 		}
+		waitForTouchButtonPress();
 	}
 }

@@ -10,8 +10,8 @@ public class Test extends Assignment {
 	EV3ColorSensor colorSensor;
 
 	// constructors
-	public Test(EV3ColorSensor colorSensor) {
-		this.colorSensor = colorSensor;
+	public Test(Sensors sensors) {
+		this.colorSensor = sensors.getColorSensor();
 	}
 
 	
