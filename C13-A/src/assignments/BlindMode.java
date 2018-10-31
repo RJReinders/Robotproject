@@ -10,7 +10,7 @@ public class BlindMode extends Assignment {
 
 	ArmRotation armRotation = new ArmRotation();
 	
-	private final int DEFAULT_SPEED = 200;
+	private final int DEFAULT_SPEED = 150;
 		
 	public BlindMode() {
 		
