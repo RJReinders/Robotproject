@@ -11,6 +11,7 @@ public class CsvFile {
 	
 	private static final String csvFileNameA = "motorA.csv";
 	private static final String csvFileNameB = "motorB.csv";
+	private static final String csvFileNameTime = "time.csv";
 	private String csvFileName = "";
 	
 	public CsvFile() {
@@ -51,7 +52,9 @@ public class CsvFile {
 			csvFileName = csvFileNameA;
 		} else if (motor.equals("B")) {
 			csvFileName = csvFileNameB;
-		} 
+		} else if (motor.equals("Time")) {
+			csvFileName = csvFileNameTime;
+		}
 
 		File csvFile = new File(csvFileName);
 

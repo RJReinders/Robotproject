@@ -16,6 +16,7 @@ public class LineFollowerRGB extends Assignment {
 	// static variables
 	private static ArrayList<Integer> roadMapA; 
 	private static ArrayList<Integer> roadMapB;
+	private static ArrayList<Integer> roadMapTime;
 
 	// final variables
 	private final double SPEEDFACTOR = 4.0; // oud: 3.0
@@ -56,6 +57,7 @@ public class LineFollowerRGB extends Assignment {
 		lights = new Lights();
 		roadMapA = new ArrayList<>();
 		roadMapB = new ArrayList<>();
+		roadMapTime = new ArrayList<>();
 		csvFile = new CsvFile();
 	}
 
@@ -81,7 +83,8 @@ public class LineFollowerRGB extends Assignment {
 		start = false;
 		finished = false;
 		acceleration = 10;
-		
+
+		int i = 0;
 		// loop until we have finished
 		while (!finished) {
 
@@ -153,6 +156,10 @@ public class LineFollowerRGB extends Assignment {
 					if (start) {
 						//arrayACounter++;
 						roadMapA.add(-motorSpeedA);
+						if (i > 0) {
+							roadMapTime.add(stopwatch.elapsed());
+						}
+						i++;
 					}
 				} else {
 					Motor.A.forward();
@@ -160,6 +167,10 @@ public class LineFollowerRGB extends Assignment {
 					if (start) {
 						//arrayACounter++;
 						roadMapA.add(motorSpeedA);
+						if (i > 0) {
+							roadMapTime.add(stopwatch.elapsed());
+						}
+						i++;
 					}
 				}
 	
@@ -209,10 +220,14 @@ public class LineFollowerRGB extends Assignment {
 		return roadMapB;
 	}
 	
+	public static ArrayList<Integer> getRoadMapTime() {
+		return roadMapTime;
+	}
+	
 	public void createCsvFiles() {
 		csvFile.createCsvFileMotor(roadMapA, "A");
 		csvFile.createCsvFileMotor(roadMapB, "B");
-
+		csvFile.createCsvFileMotor(roadMapTime, "Time");
 	}
 	
 	public void displayTrackTime() {

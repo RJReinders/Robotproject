@@ -3,12 +3,13 @@ package assignments;
 import java.util.ArrayList;
 
 import lejos.hardware.motor.Motor;
-import lejos.utility.Delay;
+import lejos.utility.Stopwatch;
 import models.ArmRotation;
 
 public class BlindMode extends Assignment {
 
 	ArmRotation armRotation = new ArmRotation();
+	private Stopwatch stopwatch;
 	
 	private final int DEFAULT_SPEED = 150;
 		
@@ -22,40 +23,41 @@ public class BlindMode extends Assignment {
 		
 		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
 		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
+		ArrayList<Integer> roadMapTime = LineFollowerRGB.getRoadMapTime();
 
 		armRotation.rotateArm(-30);
 		
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		for (int i = 0; i < roadMapA.size(); i++) {
-			Motor.A.forward();
-			Motor.B.forward();
-
-			int motorSpeedA = roadMapA.get(i);
-			int motorSpeedB = roadMapB.get(i);
-
-			System.out.println(roadMapA.get(i));
-			System.out.println(roadMapB.get(i));
-			
-			if (motorSpeedA < 0) {
-				Motor.A.backward();
-				motorSpeedA = -motorSpeedA;
-			} else {
-				Motor.A.forward();
-			}
-
-			if (motorSpeedB < 0) {
-				Motor.B.backward();
-				motorSpeedB = -motorSpeedB;
-			} else {
-				Motor.B.forward();
-			}
+		stopwatch = new Stopwatch();
 		
-			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
-			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
+		int i = 0;
+		
+		while (i < roadMapTime.size()) {
+			int timeStamp = roadMapTime.get(i);
+			if (stopwatch.elapsed() > timeStamp) {
+				int motorSpeedA = roadMapA.get(i+1);
+				int motorSpeedB = roadMapB.get(i+1);
+	
+				if (motorSpeedA < 0) {
+					Motor.A.backward();
+					motorSpeedA = -motorSpeedA;
+				} else {
+					Motor.A.forward();
+				}
+	
+				if (motorSpeedB < 0) {
+					Motor.B.backward();
+					motorSpeedB = -motorSpeedB;
+				} else {
+					Motor.B.forward();
+				}
 			
-			Delay.msDelay(50);
+				Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+				Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
+				i++;
+			}
 			
 		}
 		
