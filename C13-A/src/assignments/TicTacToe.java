@@ -401,11 +401,12 @@ public class TicTacToe extends Assignment {
 
 	private void drawNextMoveOnBoard() {
 		robot.goToSquareNumber(lastMoveMarvin);
-		// draw action toevoegen
 		Sound.beep();
 		armRotation.rotateArm(-55);
-		Delay.msDelay(1000);
+		Delay.msDelay(500);
+		robot.arcForward();
 		armRotation.rotateArm(0);
+		robot.arcBackward();
 		robot.returnFromSquareNumber(lastMoveMarvin);
 	}
 
