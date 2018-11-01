@@ -10,19 +10,13 @@ import models.*;
 
 public class Marvin {
 	// variables
-	boolean running;
-	Brick brick;
-	Sensors sensors;
-	Assignment lineFollowerRGB;
-	Assignment ticTacToe;
-	Assignment blindMode;
-
-	/*
-	 * Testprogramma's CsvFile csvFile = new CsvFile(); Lights lights = new
-	 * Lights(); Test testProgram = new Test(sensors); WriteO writeO = new WriteO();
-	 * CheckColor checkColor = new CheckColor(sensor); FollowMe followMe = new
-	 * FollowMe(sensors); ArmRotation armRotation = new ArmRotation();
-	 */
+	private boolean running;
+	private Brick brick;
+	private Sensors sensors;
+	private Assignment lineFollowerSlow;
+	private Assignment lineFollowerRGB;
+	private Assignment ticTacToe;
+	private Assignment blindMode;
 
 	public Marvin() {
 		super();
@@ -30,6 +24,7 @@ public class Marvin {
 		brick = LocalEV3.get();
 		sensors = new Sensors();
 		lineFollowerRGB = new LineFollowerRGB(sensors);
+		lineFollowerSlow = new LineFollowerSlow(sensors);
 		ticTacToe = new TicTacToe(sensors);
 		blindMode = new BlindMode();
 	}
@@ -37,25 +32,24 @@ public class Marvin {
 	public static void main(String[] args) throws Exception {
 		Marvin marvin = new Marvin();
 		marvin.run();
-		// System.exit?
 	}
 
 	private void run() {
 		while (running) {
-			waitForKeyPress();
+			runMenu();
 		}
 	}
 
-	public void waitForKeyPress() {
+	public void runMenu() {
 		// draw Menu on screen
 		Sound.beep();
 		LCD.clear();
 		LCD.drawString("Menus:", 0, 0);
-		LCD.drawString("U = LineFollower", 0, 1);
-		LCD.drawString("L = TicTacToe", 0, 2);
-		LCD.drawString("R = BlindMode", 0, 3);
-		LCD.drawString("D = Test", 0, 4);
-		LCD.drawString("ESC = EndProgram", 0, 5);
+		LCD.drawString("LineFollower", 3, 1);
+		LCD.drawString("TicTacToe", 0, 3);
+		LCD.drawString("Blind", 12, 3);
+		LCD.drawString("LineFollowerSlow", 1, 5);
+		LCD.drawString("ESC = EndProgram", 0, 7);
 
 		// wait for user input
 		int pressedButton = Button.waitForAnyEvent();
@@ -66,13 +60,9 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_RIGHT) {
 			blindMode.run();
 		} else if (pressedButton == Button.ID_DOWN) {
-			// csvFile.check();
-			// followMe.run();
-			// writeO.run();
-			// checkColor.run();
+			lineFollowerSlow.run();
 		} else if (pressedButton == Button.ID_ENTER) {
-			// enter restarts the menu
-			waitForKeyPress();
+			runMenu();
 		} else if (pressedButton == Button.ID_ESCAPE) {
 			running = false;
 		}

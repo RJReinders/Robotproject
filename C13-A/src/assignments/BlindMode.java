@@ -1,32 +1,40 @@
 package assignments;
 
 import java.util.ArrayList;
-
 import lejos.hardware.motor.Motor;
 import lejos.utility.Delay;
 import models.ArmRotation;
+import models.CsvFile;
+import models.Finals;
 
 public class BlindMode extends Assignment {
+	private ArmRotation armRotation = new ArmRotation();
+	private CsvFile csvFile = new CsvFile();
+	private ArrayList<Integer> roadMapA;
+	private ArrayList<Integer> roadMapB;	
 
-	ArmRotation armRotation = new ArmRotation();
-	
-	private final int DEFAULT_SPEED = 150;
-		
 	public BlindMode() {
-		
+
 	}
-	
+
 	@Override
 	public void run() {
-		
-		
-		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
-		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
+		readCsvFile();
+		armRotation.rotateArm(-55);
+		runParcours();
+	}
 
-		armRotation.rotateArm(-30);
-		
-		Motor.A.setSpeed(DEFAULT_SPEED);
-		Motor.B.setSpeed(DEFAULT_SPEED);
+	public void readCsvFile() {
+		roadMapA = csvFile.readCsvFileMotor("A");
+		roadMapB = csvFile.readCsvFileMotor("B");
+
+//		roadMapA = LineFollowerRGB.getRoadMapA();
+//		roadMapB = LineFollowerRGB.getRoadMapB();
+	}	
+
+	public void runParcours() {
+		Motor.A.setSpeed(Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+		Motor.B.setSpeed(Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
 
 		for (int i = 0; i < roadMapA.size(); i++) {
 			Motor.A.forward();
@@ -37,7 +45,7 @@ public class BlindMode extends Assignment {
 
 			System.out.println(roadMapA.get(i));
 			System.out.println(roadMapB.get(i));
-			
+
 			if (motorSpeedA < 0) {
 				Motor.A.backward();
 				motorSpeedA = -motorSpeedA;
@@ -51,18 +59,19 @@ public class BlindMode extends Assignment {
 			} else {
 				Motor.B.forward();
 			}
-		
-			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
-			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
-			
-			Delay.msDelay(50);
-			
+
+			Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+			Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+
+			Delay.msDelay(100);
 		}
-		
+
 		armRotation.rotateArm(0);
 		Motor.A.stop();
 		Motor.B.stop();
-		
 	}
 
+
+
 }
+

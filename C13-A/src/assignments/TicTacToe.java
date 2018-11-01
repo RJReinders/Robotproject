@@ -1,246 +1,135 @@
 package assignments;
 
+import java.io.File;
+
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
-import lejos.hardware.port.SensorPort;
-import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
-import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import models.*;
 
 public class TicTacToe extends Assignment {
 
-	// attributes
-	boolean gameOver;
-	int winner; // -1 = no winner yet, 0 = draw, 1 = Marvin, 2 = player
-	int[] gameBoard = new int[9]; // 0 = empty, 1 = Marvin, 2 = player
-	int nextPlayerIs;
-	int lastMoveMarvin;
-	Lights lights = new Lights();
-	FollowMe followMe;
-	Sensors sensors;
-	ArmRotation armRotation;
+	// variables
+	private Sensors sensors;
+	private Lights lights;
+	private CalibrateStartPosition calibrateStartPosition;
+	private EV3TouchSensor touchSensor;
+	private SampleProvider spTouch;
+	private float[] touchData;
+	private ArmRotation armRotation;
+	private File wavFile;
+	private boolean gameOver;
+	private int winner; // -1 = no winner yet, 0 = draw, 1 = Marvin, 2 = player
+	private int[] gameBoard;
+	private int nextPlayerIs;
+	private int lastMoveMarvin;
 
-	// sensors
-	EV3ColorSensor colorSensor;
+	private RobotWithWheeledChassis robot;
 
-	EV3TouchSensor touchSensor;
-	SampleProvider spTouch;
-	float[] touchData;
-	
-
-	// vervangende software
-	RobotWithWheeledChassis robot = new RobotWithWheeledChassis();
-
-	// constructors
 	public TicTacToe(Sensors sensors) {
-		this.colorSensor = sensors.getColorSensor();
 		this.touchSensor = sensors.getTouchSensor();
-		followMe = new FollowMe(sensors);
+		this.sensors = sensors;
+		calibrateStartPosition = new CalibrateStartPosition(sensors);
 		armRotation = new ArmRotation();
+		lights = new Lights();
+		robot = new RobotWithWheeledChassis();
+		gameBoard = new int[Finals.BOARD_SIZE]; // 0 = empty, 1 = Marvin, 2 = player
 	}
 
-	// main
 	@Override
 	public void run() {
 		spTouch = touchSensor.getTouchMode();
 		touchData = new float[spTouch.sampleSize()];
-		followMe.start();
-		startNewGame(); // resets all variables
+		sensors.setColorSensorRGBMode();
+		calibrateStartPosition.start();
 
+		startNewGame();
+		playGame();
+		displayOutcome();
+
+		calibrateStartPosition.endThread();
+
+	}
+
+	private void startNewGame() {
+		this.gameOver = false;
+		this.winner = -1;
+		for (int i = 0; i < this.gameBoard.length; i++) {
+			this.gameBoard[i] = 0;
+		}
+		this.nextPlayerIs = 2; // speler mag altijd beginnen
+	}
+
+	private void playGame() {
 		while (!gameOver) {
 			if (nextPlayerIs == 1) {
 				checkIfGameOver(gameBoard);
 				if (!gameOver) {
-					makeNextMove(gameBoard);
-					drawNextMoveOnBoard(); // TODO Marvin laten tekenen toevoegen
+					determineNextMove(gameBoard);
+					drawNextMoveOnBoard();
 					Delay.msDelay(500);
-					while (followMe.getDeviation() < -1 || followMe.getDeviation() > 1) {
-						robot.correctStartPosition(followMe.getDeviation()); 
+					while (calibrateStartPosition.getDirectionDeviation() < -1
+							|| calibrateStartPosition.getDirectionDeviation() > 1) {
+						robot.correctStartPosition(calibrateStartPosition.getDirectionDeviation());
 					}
 					checkIfGameOver(gameBoard);
 				}
 				nextPlayerIs = 2;
 			} else {
 				letPlayerMakeMove();
-				waitForTouchButtonPress(); // wait until user makes a move & presses the
-				// button
+				waitForTouchButtonPress();
 				scanBoard();
 				Delay.msDelay(500);
-				robot.correctStartPosition(followMe.getDeviation()); 
+				while (calibrateStartPosition.getDirectionDeviation() < -1
+						|| calibrateStartPosition.getDirectionDeviation() > 1) {
+					robot.correctStartPosition(calibrateStartPosition.getDirectionDeviation());
+				}
 				checkIfGameOver(gameBoard);
 				nextPlayerIs = 1;
 			}
 		}
-		displayOutcome();
-		followMe.endThread();
-		// TODO passende uitkomst bedenken
 	}
 
-	// methods
-	public void startNewGame() {
-		this.gameOver = false;
-		this.winner = -1;
-		for (int i = 0; i < this.gameBoard.length; i++) {
-			this.gameBoard[i] = 0;
-		}
-		this.nextPlayerIs = 2; // TODO de speler begint altijd, aanpassen?
-	}
-
-	public void letPlayerMakeMove() {
-		nextPlayerIs = 1;
-	}
-
-	private void scanBoard() {
-		float redMeasured;
-		float greenMeasured;
-		float blueMeasured;
-		colorSensor.setCurrentMode("RGB");
-		colorSensor.setFloodlight(Color.WHITE);
-		int returnSquares = 0;
-		boolean newMove = false;
-		int columnReturnSquares = 0;
-		
-		if (gameBoard[0] == 0 || gameBoard[1] == 0 || gameBoard [2] == 0) {
-			int i = 0;
-			while (i < 3 && !newMove) {
-				robot.moveSquaresForward(1);
-				columnReturnSquares++;
-				if (gameBoard[i] == 0) {
-					float[] sample = new float[colorSensor.sampleSize()];
-					colorSensor.fetchSample(sample, 0);
-					redMeasured = sample[0];
-					greenMeasured = sample[1];
-					blueMeasured = sample[2];
-					if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
-						gameBoard[i] = 2;
-						newMove = true;
-						lights.brickLights(1, 150);
-					}
-				}
-				i++;
-			}
-			robot.moveSquaresBackward(columnReturnSquares);
-			columnReturnSquares = 0;
-		}
-		
-		if ((gameBoard[3] == 0 || gameBoard[4] == 0 || gameBoard [5] == 0) && !newMove) {
-			robot.rotateRight();
-			robot.moveSquaresForward(1);
-			robot.rotateLeft();
-			int i = 3;
-			while (i < 6 && !newMove) {
-				robot.moveSquaresForward(1);
-				columnReturnSquares++;
-				if (gameBoard[i] == 0) {
-					float[] sample = new float[colorSensor.sampleSize()];
-					colorSensor.fetchSample(sample, 0);
-					redMeasured = sample[0];
-					greenMeasured = sample[1];
-					blueMeasured = sample[2];
-					if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
-						gameBoard[i] = 2;
-						newMove = true;
-						lights.brickLights(1, 150);
-					}
-				}
-				i++;
-			}
-			robot.moveSquaresBackward(columnReturnSquares);
-			columnReturnSquares = 0;
-			returnSquares = 1;
-		}
-		
-		if ((gameBoard[6] == 0 || gameBoard[7] == 0 || gameBoard [8] == 0) && !newMove) {
-			robot.rotateRight();
-			robot.moveSquaresForward(2-returnSquares);
-			robot.rotateLeft();
-			int i = 6;
-			while (i < 9 && !newMove) {
-				robot.moveSquaresForward(1);
-				columnReturnSquares++;
-				if (gameBoard[i] == 0) {
-					float[] sample = new float[colorSensor.sampleSize()];
-					colorSensor.fetchSample(sample, 0);
-					redMeasured = sample[0];
-					greenMeasured = sample[1];
-					blueMeasured = sample[2];
-					if ((int) (sample[0] * 255) + 2 < (int) (sample[2] * 255)) {
-						gameBoard[i] = 2;
-						newMove = true;
-						lights.brickLights(1, 150);
-					}
-				}
-				i++;
-			}
-			robot.moveSquaresBackward(columnReturnSquares);
-			columnReturnSquares = 0;
-			returnSquares = 2;
-		}
-		
-		if (returnSquares > 0) {
-			robot.rotateRight();
-			robot.moveSquaresBackward(returnSquares);
-			robot.rotateLeft();
-		}
-
-		lights.brickLights(2, 150);
-		
-	}
-
-	private void checkIfGameOver(int[] inputBoard) {
-		// copy the array
-		int[] testBoard = new int[9];
-		for (int i = 0; i < inputBoard.length; i++) {
-			testBoard[i] = inputBoard[i];
-		}
-
+	private void checkIfGameOver(int[] gameBoard) {
 		// see if there is a winner
-		// if there is, set winner to 1 (Marvin) or 2 (Player)
-		for (int i = 1; i < 3; i++) {
-			if (testBoard[0] == i && testBoard[1] == i && testBoard[2] == i) {
+		// if there is, return the winner
+		for (int i = 1; i <= Finals.NUMBER_OF_PLAYERS; i++) {
+			if ((gameBoard[0] == i && gameBoard[1] == i && gameBoard[2] == i)
+					|| (gameBoard[3] == i && gameBoard[4] == i && gameBoard[5] == i)
+					|| (gameBoard[6] == i && gameBoard[7] == i && gameBoard[8] == i)
+					|| (gameBoard[0] == i && gameBoard[3] == i && gameBoard[6] == i)
+					|| (gameBoard[1] == i && gameBoard[4] == i && gameBoard[7] == i)
+					|| (gameBoard[2] == i && gameBoard[5] == i && gameBoard[8] == i)
+					|| (gameBoard[0] == i && gameBoard[4] == i && gameBoard[8] == i)
+					|| (gameBoard[2] == i && gameBoard[4] == i && gameBoard[6] == i))
 				winner = i;
-			} else if (testBoard[3] == i && testBoard[4] == i && testBoard[5] == i) {
-				winner = i;
-			} else if (testBoard[6] == i && testBoard[7] == i && testBoard[8] == i) {
-				winner = i;
-			} else if (testBoard[0] == i && testBoard[3] == i && testBoard[6] == i) {
-				winner = i;
-			} else if (testBoard[1] == i && testBoard[4] == i && testBoard[7] == i) {
-				winner = i;
-			} else if (testBoard[2] == i && testBoard[5] == i && testBoard[8] == i) {
-				winner = i;
-			} else if (testBoard[0] == i && testBoard[4] == i && testBoard[8] == i) {
-				winner = i;
-			} else if (testBoard[2] == i && testBoard[4] == i && testBoard[6] == i) {
-				winner = i;
-			}
 		}
 
 		// check if all fields are filled
-		// if so, set winner to 0 (it's a draw)
 		boolean noMoves = true;
-		for (int i = 0; i < testBoard.length; i++) {
-			if (testBoard[i] == 0)
+		for (int i = 0; i < gameBoard.length; i++) {
+			if (gameBoard[i] == 0)
 				noMoves = false;
 		}
-		if (noMoves)
+
+		// determine winner
+		if (noMoves && winner == -1)
 			winner = 0;
 
-		// if either, game is over
 		if (winner != -1) {
 			gameOver = true;
 		}
 	}
 
-	private void makeNextMove(int[] inputBoard) {
-		// copy the array
+	private void determineNextMove(int[] inputBoard) {
+		// make a copy of the array for testing
 		int[] testBoard = new int[9];
 		for (int i = 0; i < inputBoard.length; i++) {
 			testBoard[i] = inputBoard[i];
 		}
+
 		// determine if there is a winning move or a non-losing move on this board
 		int necessaryMove = 0;
 		necessaryMove = findNecessaryMove(testBoard);
@@ -268,26 +157,28 @@ public class TicTacToe extends Assignment {
 					bestChance = winChance[i];
 				}
 			}
-			// make that move
+			// make that move (on the real board)
 			gameBoard[bestMove] = 1;
 			nextPlayerIs = 2;
 			lastMoveMarvin = bestMove;
 		} else {
-			// make the necessary move
+			// make the necessary move (on the real board)
 			gameBoard[necessaryMove] = 1;
 			nextPlayerIs = 2;
 			lastMoveMarvin = necessaryMove;
 		}
 	}
 
-	public int findNecessaryMove(int[] inputBoard) {
-		// copy the array
+	private int findNecessaryMove(int[] inputBoard) {
+		// make a copy of the array for testing
 		int[] testBoard = new int[9];
 		for (int i = 0; i < inputBoard.length; i++) {
 			testBoard[i] = inputBoard[i];
 		}
-		// return winning move if there is one, then return non-losing move if there is one
-		for (int j = 1; j < 3; j++) {
+
+		// return winning move if there is one, then return non-losing move if there is
+		// one
+		for (int j = 1; j <= Finals.NUMBER_OF_PLAYERS; j++) {
 			for (int i = 0; i < testBoard.length; i++) {
 				if (testBoard[0] == 0 && ((testBoard[1] == j && testBoard[2] == j)
 						|| (testBoard[3] == j && testBoard[6] == j) || (testBoard[4] == j && testBoard[8] == j)))
@@ -323,8 +214,8 @@ public class TicTacToe extends Assignment {
 		return 0;
 	}
 
-	public int rateThisMove(int[] inputBoard) {
-		// copy the array
+	private int rateThisMove(int[] inputBoard) {
+		// make a copy of the array for testing
 		int[] testBoard = new int[9];
 		for (int i = 0; i < inputBoard.length; i++) {
 			testBoard[i] = inputBoard[i];
@@ -332,24 +223,17 @@ public class TicTacToe extends Assignment {
 
 		int theWinner = -1;
 		// check if there is a winner - if so, return outcome
-		for (int i = 1; i < 3; i++) {
-			if (testBoard[0] == i && testBoard[1] == i && testBoard[2] == i) {
+		for (int i = 1; i <= Finals.NUMBER_OF_PLAYERS; i++) {
+			if ((testBoard[0] == i && testBoard[1] == i && testBoard[2] == i)
+					|| (testBoard[3] == i && testBoard[4] == i && testBoard[5] == i)
+					|| (testBoard[6] == i && testBoard[7] == i && testBoard[8] == i)
+					|| (testBoard[0] == i && testBoard[3] == i && testBoard[6] == i)
+					|| (testBoard[1] == i && testBoard[4] == i && testBoard[7] == i)
+					|| (testBoard[2] == i && testBoard[5] == i && testBoard[8] == i)
+					|| (testBoard[0] == i && testBoard[4] == i && testBoard[8] == i)
+					|| (testBoard[2] == i && testBoard[4] == i && testBoard[6] == i))
 				theWinner = i;
-			} else if (testBoard[3] == i && testBoard[4] == i && testBoard[5] == i) {
-				theWinner = i;
-			} else if (testBoard[6] == i && testBoard[7] == i && testBoard[8] == i) {
-				theWinner = i;
-			} else if (testBoard[0] == i && testBoard[3] == i && testBoard[6] == i) {
-				theWinner = i;
-			} else if (testBoard[1] == i && testBoard[4] == i && testBoard[7] == i) {
-				theWinner = i;
-			} else if (testBoard[2] == i && testBoard[5] == i && testBoard[8] == i) {
-				theWinner = i;
-			} else if (testBoard[0] == i && testBoard[4] == i && testBoard[8] == i) {
-				theWinner = i;
-			} else if (testBoard[2] == i && testBoard[4] == i && testBoard[6] == i) {
-				theWinner = i;
-			}
+
 		}
 		if (theWinner == 1)
 			return 1; // Marvin wins
@@ -401,42 +285,148 @@ public class TicTacToe extends Assignment {
 
 	private void drawNextMoveOnBoard() {
 		robot.goToSquareNumber(lastMoveMarvin);
-		// draw action toevoegen
 		Sound.beep();
 		armRotation.rotateArm(-55);
-		Delay.msDelay(1000);
+		Delay.msDelay(500);
+		robot.arcForward();
 		armRotation.rotateArm(0);
+		robot.arcBackward();
 		robot.returnFromSquareNumber(lastMoveMarvin);
 	}
 
+	private void letPlayerMakeMove() {
+		nextPlayerIs = 1;
+	}
+
 	private void waitForTouchButtonPress() {
-		// draw LCD prompt
-		//LCD.clear();
-		//LCD.drawString("Druk op de rode", 0, 4);
-		//LCD.drawString("knop als je een", 0, 5);
-		//LCD.drawString("zet gedaan hebt.", 0, 6);
-		// wait for button press
+
+		LCD.clear();
+		LCD.drawString("Druk op de rode", 0, 1);
+		LCD.drawString("knop als je een", 0, 2);
+		LCD.drawString("zet gedaan hebt.", 0, 3);
+
 		boolean buttonPressed = false;
 		while (!buttonPressed) {
 			Delay.msDelay(100);
 			spTouch.fetchSample(touchData, 0);
 			if (touchData[0] == 1) {
-				Sound.buzz();
+				Sound.beep();
 				buttonPressed = true;
-				Delay.msDelay(2000);
+				Delay.msDelay(1000);
 			}
 		}
 	}
 
+	private void scanBoard() {
+
+		float redMeasured;
+		float blueMeasured;
+		int rowReturnSquares = 0;
+		int columnReturnSquares = 0;
+		boolean playerMoveFound = false;
+		float[] sample;
+
+		// scan first column
+		if (gameBoard[0] == 0 || gameBoard[1] == 0 || gameBoard[2] == 0) {
+			int i = 0;
+			while (i < 3 && !playerMoveFound) {
+				robot.moveSquaresForward(1);
+				columnReturnSquares++;
+				if (gameBoard[i] == 0) {
+					sample = sensors.getRGBSample();
+					redMeasured = sample[0];
+					blueMeasured = sample[2];
+					if ((int) (redMeasured * Finals.SAMPLE_TO_RGB)
+							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
+						gameBoard[i] = 2;
+						playerMoveFound = true;
+						lights.brickLights(1);
+					}
+				}
+				i++;
+			}
+			robot.moveSquaresBackward(columnReturnSquares);
+			columnReturnSquares = 0;
+		}
+
+		// scan second column
+		if ((gameBoard[3] == 0 || gameBoard[4] == 0 || gameBoard[5] == 0) && !playerMoveFound) {
+			robot.turnRight();
+			robot.moveSquaresForward(1);
+			robot.turnLeft();
+			int i = 3;
+			while (i < 6 && !playerMoveFound) {
+				robot.moveSquaresForward(1);
+				columnReturnSquares++;
+				if (gameBoard[i] == 0) {
+					sample = sensors.getRGBSample();
+					redMeasured = sample[0];
+					blueMeasured = sample[2];
+					if ((int) (redMeasured * Finals.SAMPLE_TO_RGB)
+							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
+						gameBoard[i] = 2;
+						playerMoveFound = true;
+						lights.brickLights(1);
+					}
+				}
+				i++;
+			}
+			robot.moveSquaresBackward(columnReturnSquares);
+			columnReturnSquares = 0;
+			rowReturnSquares = 1;
+		}
+
+		// scan third column
+		if ((gameBoard[6] == 0 || gameBoard[7] == 0 || gameBoard[8] == 0) && !playerMoveFound) {
+			robot.turnRight();
+			robot.moveSquaresForward(2 - rowReturnSquares);
+			robot.turnLeft();
+			int i = 6;
+			while (i < 9 && !playerMoveFound) {
+				robot.moveSquaresForward(1);
+				columnReturnSquares++;
+				if (gameBoard[i] == 0) {
+					sample = sensors.getRGBSample();
+					redMeasured = sample[0];
+					blueMeasured = sample[2];
+					if ((int) (redMeasured * Finals.SAMPLE_TO_RGB)
+							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
+						gameBoard[i] = 2;
+						playerMoveFound = true;
+						lights.brickLights(1);
+					}
+				}
+				i++;
+			}
+			robot.moveSquaresBackward(columnReturnSquares);
+			columnReturnSquares = 0;
+			rowReturnSquares = 2;
+		}
+
+		if (rowReturnSquares > 0) {
+			robot.turnRight();
+			robot.moveSquaresBackward(rowReturnSquares);
+			robot.turnLeft();
+		}
+
+		lights.brickLights(2);
+
+	}
+
 	private void displayOutcome() {
-		// TODO een passend win geluidje/dansje toevoegen
 		LCD.clear();
 		if (winner == 0) {
-			LCD.drawString("gelijkspel", 0, 4);
+			LCD.drawString("Gelijkspel.", 0, 4);
+			wavFile = new File("tryagain.wav");
+			Sound.playSample(wavFile, 80);
 		} else if (winner == 1) {
-			LCD.drawString("Marvin wint!", 0, 4);
+			LCD.drawString("Ik heb gewonnen!", 0, 4);
+			wavFile = new File("we.wav");
+			Sound.playSample(wavFile, 80);
 		} else {
-			LCD.drawString("Marvin verliest", 0, 4);
+			LCD.drawString("Ik heb verloren...", 0, 4);
+			wavFile = new File("always.wav");
+			Sound.playSample(wavFile, 80);
 		}
 		waitForTouchButtonPress();
 	}

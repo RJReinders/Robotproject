@@ -1,5 +1,6 @@
 package assignments;
 
+import java.util.ArrayList;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.Motor;
@@ -7,28 +8,33 @@ import lejos.utility.Delay;
 import lejos.utility.Stopwatch;
 import models.*;
 
-public class LineFollowerRGB extends Assignment {
+public class LineFollowerSlow extends Assignment {
+
+	// static variables
+	private static ArrayList<Integer> roadMapA;
+	private static ArrayList<Integer> roadMapB;
 
 	// variables
 	private Sensors sensors;
 	private Stopwatch stopwatch;
-	private Lights lights;
+	private CsvFile csvFile;
 	private int currentLightIntensity;
 	private float redMeasured;
 	private float greenMeasured;
 	private float blueMeasured;
 	private int finishLineColor; // 0 = geen meting, 1 = blauw, 2 = rood
-	private int acceleration;
 	private int blackBorder;
 	private int whiteBorder;
 	private boolean start;
 	private boolean finished;
 	private double trackTime;
 
-	public LineFollowerRGB(Sensors sensors) {
+	public LineFollowerSlow(Sensors sensors) {
 		this.sensors = sensors;
 		stopwatch = new Stopwatch();
-		lights = new Lights();
+		roadMapA = new ArrayList<>();
+		roadMapB = new ArrayList<>();
+		csvFile = new CsvFile();
 	}
 
 	@Override
@@ -36,6 +42,7 @@ public class LineFollowerRGB extends Assignment {
 		sensors.setColorSensorRGBMode();
 		calibrateColors();
 		followLine();
+		createCsvFiles();
 		//sensors.closeColorSensor();
 		displayTrackTime();
 	}
@@ -51,7 +58,6 @@ public class LineFollowerRGB extends Assignment {
 	private void followLine() {
 		start = false;
 		finished = false;
-		acceleration = 10;
 
 		// loop until we have finished
 		while (!finished) {
@@ -107,43 +113,41 @@ public class LineFollowerRGB extends Assignment {
 				LCD.drawString("    ", 0, 5);
 				LCD.drawInt(currentLightIntensity, 0, 5);
 
-				int motorSpeedA = (int) (Finals.SPEEDFACTOR * (currentLightIntensity - blackBorder));
-				int motorSpeedB = (int) (Finals.SPEEDFACTOR * (whiteBorder - currentLightIntensity));
-
-				// if (almost) straight line, accelerate
-				if (motorSpeedA / (motorSpeedB + 1) > 0.55 && motorSpeedA / (motorSpeedB + 1) < 1.45) {
-					acceleration += 15;
-					if (acceleration > 450)
-						acceleration = 450;
-					lights.brickLights(1);
-				} else {
-					acceleration -= 45;
-					if (acceleration < 15)
-						acceleration = 15;
-					lights.brickLights(2);
-				}
+				int motorSpeedA = (int) (Finals.SPEEDFACTOR * (currentLightIntensity - blackBorder) / Finals.SLOW_FACTOR);
+				int motorSpeedB = (int) (Finals.SPEEDFACTOR * (whiteBorder - currentLightIntensity) / Finals.SLOW_FACTOR);
 
 				if (motorSpeedA < 0) {
 					Motor.A.backward();
 					motorSpeedA = -motorSpeedA * Finals.REVERSE_SPEEDFACTOR;
+					if (start)
+						roadMapA.add(-motorSpeedA);
 				} else {
 					Motor.A.forward();
-					motorSpeedA += acceleration;
+					if (start)
+						roadMapA.add(motorSpeedA);
 				}
 
 				if (motorSpeedB < 0) {
 					Motor.B.backward();
 					motorSpeedB = -motorSpeedB * Finals.REVERSE_SPEEDFACTOR;
+					if (start)
+						roadMapB.add(-motorSpeedB);
 				} else {
 					Motor.B.forward();
-					motorSpeedB += acceleration;
+					if (start)
+						roadMapB.add(motorSpeedB);
 				}
 
-				Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED);
-				Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED);
-				Delay.msDelay(50);
+				Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+				Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+				Delay.msDelay(100);
 			}
 		}
+	}
+
+	private void createCsvFiles() {
+		csvFile.createCsvFileMotor(roadMapA, "A");
+		csvFile.createCsvFileMotor(roadMapB, "B");
 	}
 
 	private void displayTrackTime() {

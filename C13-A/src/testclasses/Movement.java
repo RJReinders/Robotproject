@@ -1,4 +1,4 @@
-package models;
+package testclasses;
 
 import lejos.hardware.motor.Motor;
 
