@@ -10,24 +10,14 @@ import models.*;
 
 public class Marvin {
 	// variables
-	boolean running;
-	Brick brick;
-	Sensors sensors;
-	Assignment lineFollowerSlow;
-	Assignment lineFollowerRGB;
-	Assignment ticTacToe;
-	Assignment blindMode;
+	private boolean running;
+	private Brick brick;
+	private Sensors sensors;
+	private Assignment lineFollowerSlow;
+	private Assignment lineFollowerRGB;
+	private Assignment ticTacToe;
+	private Assignment blindMode;
 
-	/* Testprogramma's
-	CsvFile csvFile = new CsvFile();
-	Lights lights = new Lights();
-	Test testProgram = new Test(sensors);
-	WriteO writeO = new WriteO();
-	CheckColor checkColor = new CheckColor(sensor);
-	FollowMe followMe = new FollowMe(sensors);
-	ArmRotation armRotation = new ArmRotation();
-	*/
-	
 	public Marvin() {
 		super();
 		running = true;
@@ -42,16 +32,15 @@ public class Marvin {
 	public static void main(String[] args) throws Exception {
 		Marvin marvin = new Marvin();
 		marvin.run();
-		// System.exit?
 	}
 
 	private void run() {
 		while (running) {
-			waitForKeyPress();
+			runMenu();
 		}
 	}
 
-	public void waitForKeyPress() {
+	public void runMenu() {
 		// draw Menu on screen
 		Sound.beep();
 		LCD.clear();
@@ -73,8 +62,7 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_DOWN) {
 			lineFollowerSlow.run();
 		} else if (pressedButton == Button.ID_ENTER) {
-			// enter restarts the menu
-			waitForKeyPress();
+			runMenu();
 		} else if (pressedButton == Button.ID_ESCAPE) {
 			running = false;
 		}

@@ -4,7 +4,6 @@ import java.io.File;
 
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
-import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
@@ -16,7 +15,6 @@ public class TicTacToe extends Assignment {
 	private Sensors sensors;
 	private Lights lights;
 	private CalibrateStartPosition calibrateStartPosition;
-	private EV3ColorSensor colorSensor;
 	private EV3TouchSensor touchSensor;
 	private SampleProvider spTouch;
 	private float[] touchData;
@@ -31,7 +29,6 @@ public class TicTacToe extends Assignment {
 	private RobotWithWheeledChassis robot;
 
 	public TicTacToe(Sensors sensors) {
-		this.colorSensor = sensors.getColorSensor();
 		this.touchSensor = sensors.getTouchSensor();
 		this.sensors = sensors;
 		calibrateStartPosition = new CalibrateStartPosition(sensors);
@@ -343,7 +340,7 @@ public class TicTacToe extends Assignment {
 							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
 						gameBoard[i] = 2;
 						playerMoveFound = true;
-						lights.brickLights(1, 150);
+						lights.brickLights(1);
 					}
 				}
 				i++;
@@ -354,9 +351,9 @@ public class TicTacToe extends Assignment {
 
 		// scan second column
 		if ((gameBoard[3] == 0 || gameBoard[4] == 0 || gameBoard[5] == 0) && !playerMoveFound) {
-			robot.rotateRight();
+			robot.turnRight();
 			robot.moveSquaresForward(1);
-			robot.rotateLeft();
+			robot.turnLeft();
 			int i = 3;
 			while (i < 6 && !playerMoveFound) {
 				robot.moveSquaresForward(1);
@@ -369,7 +366,7 @@ public class TicTacToe extends Assignment {
 							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
 						gameBoard[i] = 2;
 						playerMoveFound = true;
-						lights.brickLights(1, 150);
+						lights.brickLights(1);
 					}
 				}
 				i++;
@@ -381,9 +378,9 @@ public class TicTacToe extends Assignment {
 
 		// scan third column
 		if ((gameBoard[6] == 0 || gameBoard[7] == 0 || gameBoard[8] == 0) && !playerMoveFound) {
-			robot.rotateRight();
+			robot.turnRight();
 			robot.moveSquaresForward(2 - rowReturnSquares);
-			robot.rotateLeft();
+			robot.turnLeft();
 			int i = 6;
 			while (i < 9 && !playerMoveFound) {
 				robot.moveSquaresForward(1);
@@ -396,7 +393,7 @@ public class TicTacToe extends Assignment {
 							+ Finals.DIFFERENCE_BLUE_OVER_RED < (int) (blueMeasured * Finals.SAMPLE_TO_RGB)) {
 						gameBoard[i] = 2;
 						playerMoveFound = true;
-						lights.brickLights(1, 150);
+						lights.brickLights(1);
 					}
 				}
 				i++;
@@ -407,12 +404,12 @@ public class TicTacToe extends Assignment {
 		}
 
 		if (rowReturnSquares > 0) {
-			robot.rotateRight();
+			robot.turnRight();
 			robot.moveSquaresBackward(rowReturnSquares);
-			robot.rotateLeft();
+			robot.turnLeft();
 		}
 
-		lights.brickLights(2, 150);
+		lights.brickLights(2);
 
 	}
 

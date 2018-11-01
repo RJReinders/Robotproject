@@ -19,29 +19,23 @@ public class CalibrateStartPosition extends Thread {
 	}
 
 	public void run() {
-
 		while (!stopThread) {
 			checkBeacon();
 		}
 		iRSensor.close();
-
 	}
 
 	private void checkBeacon() {
-
-		int distanceMeasure = 0;
 		SampleProvider spIR = iRSensor.getSeekMode();
 		float[] sample = new float[spIR.sampleSize()];
 		spIR.fetchSample(sample, 0);
 
 		directionDeviation = (int) sample[0];
-		distanceMeasure = (int) sample[1];
 
 		LCD.drawString("Hoekafwijking:", 0, 7);
 		LCD.drawString("   ", 15, 7);
 		LCD.drawInt(directionDeviation, 15, 7);
 		Delay.msDelay(500);
-
 	}
 
 	public void endThread() {

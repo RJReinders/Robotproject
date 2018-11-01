@@ -37,7 +37,7 @@ public class FollowMe {
 
 		int motorSpeed = 900;
 
-		lights.brickLights(2, 50);
+		lights.brickLights(2);
 
 		System.out.println("Start meting");
 
@@ -48,7 +48,7 @@ public class FollowMe {
 			afstand.fetchSample(sample, 0);
 			distanceValue = (int) sample[0];
 
-			lights.brickLights(0, 0);
+			lights.brickLights(0);
 
 			LCD.drawString("Kleine afstand:", 4, 3);
 			LCD.drawInt(distanceValue, 4, 4);
@@ -62,14 +62,14 @@ public class FollowMe {
 
 				// Motor.A.setSpeed(motorSpeed * 2);
 				// Motor.B.setSpeed(motorSpeed * 2);
-				lights.brickLights(5, 50);
+				lights.brickLights(5);
 
 			} else {
 
 				LCD.drawString("Kleine afstand:", 4, 2);
 				// Motor.A.setSpeed(motorSpeed * 3);
 				// Motor.B.setSpeed(motorSpeed * 3);
-				lights.brickLights(5, 50);
+				lights.brickLights(5);
 
 			}
 		}

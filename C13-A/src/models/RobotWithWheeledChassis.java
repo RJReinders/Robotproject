@@ -34,11 +34,11 @@ public class RobotWithWheeledChassis {
 		chassis.setAngularAcceleration(ANGULAR_ACCELERATION);
 	}
 
-	public void rotateRight() {
+	public void turnRight() {
 		pilot.rotate(90.0);
 	}
 
-	public void rotateLeft() {
+	public void turnLeft() {
 		pilot.rotate(-90.0);
 	}
 
@@ -61,12 +61,12 @@ public class RobotWithWheeledChassis {
 	public void goToSquareNumber(int number) {
 		setXAndY(number);
 		if (x + OFFSET_X_AXIS_FOR_MOVE != 0) {
-			this.rotateRight();
+			this.turnRight();
 			if (x + OFFSET_X_AXIS_FOR_MOVE < 0)
 				this.moveSquaresBackward(-(x + OFFSET_X_AXIS_FOR_MOVE));
 			else
 				this.moveSquaresForward(x + OFFSET_X_AXIS_FOR_MOVE);
-			this.rotateLeft();
+			this.turnLeft();
 		}
 		this.moveSquaresForward(y + 1 + OFFSET_Y_AXIS_FOR_MOVE);
 	}
@@ -75,12 +75,12 @@ public class RobotWithWheeledChassis {
 		setXAndY(number);
 		this.moveSquaresBackward(y + 1 + OFFSET_Y_AXIS_FOR_MOVE);
 		if (x - OFFSET_X_AXIS_FOR_MOVE != 0) {
-			this.rotateRight();
+			this.turnRight();
 			if (x + OFFSET_X_AXIS_FOR_MOVE < 0)
 				this.moveSquaresForward(-(x + OFFSET_X_AXIS_FOR_MOVE));
 			else
 				this.moveSquaresBackward(x + OFFSET_X_AXIS_FOR_MOVE);
-			this.rotateLeft();
+			this.turnLeft();
 		}
 	}
 	
