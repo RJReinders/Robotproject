@@ -10,9 +10,6 @@ import models.*;
 
 public class LineFollowerSlow extends Assignment {
 
-	// final variables
-	private final int SLOW_FACTOR = 2;
-	
 	// static variables
 	private static ArrayList<Integer> roadMapA;
 	private static ArrayList<Integer> roadMapB;
@@ -116,8 +113,8 @@ public class LineFollowerSlow extends Assignment {
 				LCD.drawString("    ", 0, 5);
 				LCD.drawInt(currentLightIntensity, 0, 5);
 
-				int motorSpeedA = (int) (Finals.SPEEDFACTOR * (currentLightIntensity - blackBorder) / SLOW_FACTOR);
-				int motorSpeedB = (int) (Finals.SPEEDFACTOR * (whiteBorder - currentLightIntensity) / SLOW_FACTOR);
+				int motorSpeedA = (int) (Finals.SPEEDFACTOR * (currentLightIntensity - blackBorder) / Finals.SLOW_FACTOR);
+				int motorSpeedB = (int) (Finals.SPEEDFACTOR * (whiteBorder - currentLightIntensity) / Finals.SLOW_FACTOR);
 
 				if (motorSpeedA < 0) {
 					Motor.A.backward();
@@ -141,8 +138,8 @@ public class LineFollowerSlow extends Assignment {
 						roadMapB.add(motorSpeedB);
 				}
 
-				Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED / SLOW_FACTOR);
-				Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED / SLOW_FACTOR);
+				Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+				Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
 				Delay.msDelay(100);
 			}
 		}

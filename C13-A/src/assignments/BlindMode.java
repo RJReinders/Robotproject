@@ -5,9 +5,9 @@ import lejos.hardware.motor.Motor;
 import lejos.utility.Delay;
 import models.ArmRotation;
 import models.CsvFile;
+import models.Finals;
 
 public class BlindMode extends Assignment {
-	private final int DEFAULT_SPEED = 100;
 	private ArmRotation armRotation = new ArmRotation();
 	private CsvFile csvFile = new CsvFile();
 	private ArrayList<Integer> roadMapA;
@@ -33,8 +33,8 @@ public class BlindMode extends Assignment {
 	}	
 
 	public void runParcours() {
-		Motor.A.setSpeed(DEFAULT_SPEED);
-		Motor.B.setSpeed(DEFAULT_SPEED);
+		Motor.A.setSpeed(Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+		Motor.B.setSpeed(Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
 
 		for (int i = 0; i < roadMapA.size(); i++) {
 			Motor.A.forward();
@@ -60,8 +60,8 @@ public class BlindMode extends Assignment {
 				Motor.B.forward();
 			}
 
-			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
-			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
+			Motor.A.setSpeed(motorSpeedA + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
+			Motor.B.setSpeed(motorSpeedB + Finals.DEFAULT_SPEED / Finals.SLOW_FACTOR);
 
 			Delay.msDelay(100);
 		}

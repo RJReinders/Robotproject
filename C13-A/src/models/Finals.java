@@ -1,6 +1,7 @@
 package models;
 
 public class Finals {
+	public final static int SLOW_FACTOR = 2;
 	public final static double SPEEDFACTOR = 4.0; // oud: 3.0
 	public final static int REVERSE_SPEEDFACTOR = 3;
 	public final static int DEFAULT_SPEED = 150; // oud: 75
