@@ -14,7 +14,7 @@ public class ArmRotation {
 		Motor.C.setSpeed(100);
 		Motor.C.rotateTo(highSpeedRotation);
 		// lowspeed mode to 100%
-		Motor.C.setSpeed(10);
+		Motor.C.setSpeed(20);
 		Motor.C.rotateTo(lowSpeedRotation);
 		Motor.C.stop();
 
