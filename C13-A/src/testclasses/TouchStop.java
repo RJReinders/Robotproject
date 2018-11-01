@@ -1,4 +1,4 @@
-package models;
+package testclasses;
 
 // libraries
 import lejos.hardware.sensor.EV3TouchSensor;
