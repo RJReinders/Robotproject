@@ -1,70 +1,77 @@
 package assignments;
 
 import java.util.ArrayList;
-
 import lejos.hardware.motor.Motor;
-import lejos.utility.Stopwatch;
+import lejos.utility.Delay;
 import models.ArmRotation;
+import models.CsvFile;
 
 public class BlindMode extends Assignment {
+	private final int DEFAULT_SPEED = 100;
+	private ArmRotation armRotation = new ArmRotation();
+	private CsvFile csvFile = new CsvFile();
+	private ArrayList<Integer> roadMapA;
+	private ArrayList<Integer> roadMapB;	
 
-	ArmRotation armRotation = new ArmRotation();
-	private Stopwatch stopwatch;
-	
-	private final int DEFAULT_SPEED = 150;
-		
 	public BlindMode() {
-		
+
 	}
-	
+
 	@Override
 	public void run() {
-		
-		
-		ArrayList<Integer> roadMapA = LineFollowerRGB.getRoadMapA();
-		ArrayList<Integer> roadMapB = LineFollowerRGB.getRoadMapB();
-		ArrayList<Integer> roadMapTime = LineFollowerRGB.getRoadMapTime();
+		readCsvFile();
+		armRotation.rotateArm(-55);
+		runParcours();
+	}
 
-		armRotation.rotateArm(-30);
-		
+	public void readCsvFile() {
+		roadMapA = csvFile.readCsvFileMotor("A");
+		roadMapB = csvFile.readCsvFileMotor("B");
+
+//		roadMapA = LineFollowerRGB.getRoadMapA();
+//		roadMapB = LineFollowerRGB.getRoadMapB();
+	}	
+
+	public void runParcours() {
 		Motor.A.setSpeed(DEFAULT_SPEED);
 		Motor.B.setSpeed(DEFAULT_SPEED);
 
-		stopwatch = new Stopwatch();
-		
-		int i = 0;
-		
-		while (i < roadMapTime.size()) {
-			int timeStamp = roadMapTime.get(i);
-			if (stopwatch.elapsed() > timeStamp) {
-				int motorSpeedA = roadMapA.get(i+1);
-				int motorSpeedB = roadMapB.get(i+1);
-	
-				if (motorSpeedA < 0) {
-					Motor.A.backward();
-					motorSpeedA = -motorSpeedA;
-				} else {
-					Motor.A.forward();
-				}
-	
-				if (motorSpeedB < 0) {
-					Motor.B.backward();
-					motorSpeedB = -motorSpeedB;
-				} else {
-					Motor.B.forward();
-				}
-			
-				Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
-				Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
-				i++;
+		for (int i = 0; i < roadMapA.size(); i++) {
+			Motor.A.forward();
+			Motor.B.forward();
+
+			int motorSpeedA = roadMapA.get(i);
+			int motorSpeedB = roadMapB.get(i);
+
+			System.out.println(roadMapA.get(i));
+			System.out.println(roadMapB.get(i));
+
+			if (motorSpeedA < 0) {
+				Motor.A.backward();
+				motorSpeedA = -motorSpeedA;
+			} else {
+				Motor.A.forward();
 			}
-			
+
+			if (motorSpeedB < 0) {
+				Motor.B.backward();
+				motorSpeedB = -motorSpeedB;
+			} else {
+				Motor.B.forward();
+			}
+
+			Motor.A.setSpeed(motorSpeedA + DEFAULT_SPEED);
+			Motor.B.setSpeed(motorSpeedB + DEFAULT_SPEED);
+
+			Delay.msDelay(100);
 		}
-		
+
 		armRotation.rotateArm(0);
 		Motor.A.stop();
 		Motor.B.stop();
-		
 	}
 
+
+
 }
+

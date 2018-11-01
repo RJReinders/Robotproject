@@ -13,6 +13,7 @@ public class Marvin {
 	boolean running;
 	Brick brick;
 	Sensors sensors;
+	Assignment lineFollowerSlow;
 	Assignment lineFollowerRGB;
 	Assignment ticTacToe;
 	Assignment blindMode;
@@ -33,6 +34,7 @@ public class Marvin {
 		brick = LocalEV3.get();
 		sensors = new Sensors();
 		lineFollowerRGB = new LineFollowerRGB(sensors);
+		lineFollowerSlow = new LineFollowerSlow(sensors);
 		ticTacToe = new TicTacToe(sensors);
 		blindMode = new BlindMode();
 	}
@@ -54,11 +56,11 @@ public class Marvin {
 		Sound.beep();
 		LCD.clear();
 		LCD.drawString("Menus:", 0, 0);
-		LCD.drawString("U = LineFollower", 0, 1);
-		LCD.drawString("L = TicTacToe", 0, 2);
-		LCD.drawString("R = BlindMode", 0, 3);
-		LCD.drawString("D = Test", 0, 4);
-		LCD.drawString("ESC = EndProgram", 0, 5);
+		LCD.drawString("LineFollower", 3, 1);
+		LCD.drawString("TicTacToe", 0, 3);
+		LCD.drawString("Blind", 12, 3);
+		LCD.drawString("LineFollowerSlow", 1, 5);
+		LCD.drawString("ESC = EndProgram", 0, 7);
 
 		// wait for user input
 		int pressedButton = Button.waitForAnyEvent();
@@ -69,10 +71,7 @@ public class Marvin {
 		} else if (pressedButton == Button.ID_RIGHT) {
 			blindMode.run();
 		} else if (pressedButton == Button.ID_DOWN) {
-			// csvFile.check();
-			// followMe.run();
-			// writeO.run();
-			// checkColor.run();
+			lineFollowerSlow.run();
 		} else if (pressedButton == Button.ID_ENTER) {
 			// enter restarts the menu
 			waitForKeyPress();
