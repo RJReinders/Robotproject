@@ -12,10 +12,6 @@ import models.*;
 
 public class TicTacToe extends Assignment {
 
-	// final variables
-	private final int BOARD_SIZE = 9;
-	private final int NUMBER_OF_PLAYERS = 2;
-
 	// variables
 	private Sensors sensors;
 	private Lights lights;
@@ -42,7 +38,7 @@ public class TicTacToe extends Assignment {
 		armRotation = new ArmRotation();
 		lights = new Lights();
 		robot = new RobotWithWheeledChassis();
-		gameBoard = new int[BOARD_SIZE]; // 0 = empty, 1 = Marvin, 2 = player
+		gameBoard = new int[Finals.BOARD_SIZE]; // 0 = empty, 1 = Marvin, 2 = player
 	}
 
 	@Override
@@ -102,7 +98,7 @@ public class TicTacToe extends Assignment {
 	private void checkIfGameOver(int[] gameBoard) {
 		// see if there is a winner
 		// if there is, return the winner
-		for (int i = 1; i <= NUMBER_OF_PLAYERS; i++) {
+		for (int i = 1; i <= Finals.NUMBER_OF_PLAYERS; i++) {
 			if ((gameBoard[0] == i && gameBoard[1] == i && gameBoard[2] == i)
 					|| (gameBoard[3] == i && gameBoard[4] == i && gameBoard[5] == i)
 					|| (gameBoard[6] == i && gameBoard[7] == i && gameBoard[8] == i)
@@ -185,7 +181,7 @@ public class TicTacToe extends Assignment {
 
 		// return winning move if there is one, then return non-losing move if there is
 		// one
-		for (int j = 1; j <= NUMBER_OF_PLAYERS; j++) {
+		for (int j = 1; j <= Finals.NUMBER_OF_PLAYERS; j++) {
 			for (int i = 0; i < testBoard.length; i++) {
 				if (testBoard[0] == 0 && ((testBoard[1] == j && testBoard[2] == j)
 						|| (testBoard[3] == j && testBoard[6] == j) || (testBoard[4] == j && testBoard[8] == j)))
@@ -230,7 +226,7 @@ public class TicTacToe extends Assignment {
 
 		int theWinner = -1;
 		// check if there is a winner - if so, return outcome
-		for (int i = 1; i <= NUMBER_OF_PLAYERS; i++) {
+		for (int i = 1; i <= Finals.NUMBER_OF_PLAYERS; i++) {
 			if ((testBoard[0] == i && testBoard[1] == i && testBoard[2] == i)
 					|| (testBoard[3] == i && testBoard[4] == i && testBoard[5] == i)
 					|| (testBoard[6] == i && testBoard[7] == i && testBoard[8] == i)

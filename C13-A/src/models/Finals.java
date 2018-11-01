@@ -8,4 +8,6 @@ public class Finals {
 	public final static int DIFFERENCE_RED_OVER_BLUE = 30;
 	public final static int MAXIMUM_GREEN_IN_RED = 50;
 	public final static int SAMPLE_TO_RGB = 255;
+	public final static int BOARD_SIZE = 9;
+	public final static int NUMBER_OF_PLAYERS = 2;
 }
